@@ -6,8 +6,8 @@ CMD sucks. Use Git Bash to run the following:<br>
 Or do it manually I guess.
 
 Run the following in the **GIT BASH** terminal (while in the project folder):<br>
-&emsp;`sh venv.py` -> if you want a virtual environment (optional, but recommended)<br>
-&emsp;`sh init.py` -> to get the dependencies.
+&emsp;`sh sh/venv.py` -> if you want a virtual environment (optional, but recommended)<br>
+&emsp;`sh sh/init.py` -> to get the dependencies.
 
 To activate the venv: `. ./env/Scripts/activate`
 
@@ -15,6 +15,14 @@ if you're using the "run code" button, **make sure you run the activate script i
 You'll know you aren't in the venv if you cant see the "(venv)"
 
 Note: you won't be able to use venv with CMD.
+
+We now require the Google API. In order to test the app, I (Adsu) will need to **add you as a test user on the API page**, otherwise it won't work.<br>
+Assuming you're already a test user, you'll be prompted to consent to the scopes of the project on the first time run.<br>
+This will generate a `token.json` file. Provided you have that file, you should be fine to continue as normal.
+<br><br>
+To begin the app, run:
+
+`python src`
 
 ## Roadmap
 
