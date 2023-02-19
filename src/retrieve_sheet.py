@@ -13,7 +13,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 # The ID and range of a sample spreadsheet.
 CHASE_VGM_SCOREBOARD_ID    = "1GznrCAUaUxofszlk79bgJGEri5t1xoSzBASrXnVsLl0"
-CHASE_VGM_SCOREBOARD_RANGE = "Detailed Scoreboard!A2:T"
+CHASE_VGM_SCOREBOARD_RANGE = "'Detailed Scoreboard'"
 
 
 @cache

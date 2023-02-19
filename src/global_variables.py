@@ -11,3 +11,9 @@ CHASE_VGM_SCOREBOARD_RANGE  = os.getenv( "CHASE_VGM_SCOREBOARD_RANGE")
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
 SCORES = {}
+
+class COLORS:
+  error = 0xff4063
+  red   = 0xff4063
+  score = 0xffd22e
+  subs  = 0x2eff43
