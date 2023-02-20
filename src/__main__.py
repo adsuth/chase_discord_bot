@@ -12,6 +12,8 @@ from global_variables import SERVER_ID
 from global_variables import SCORES
 from global_variables import COLORS
 
+from views.sel_submission_game import SubmissionGameSelect
+
 from retrieve_sheet   import retrieve_values
 from player_score     import parse_raw_scores
 
@@ -25,37 +27,6 @@ bot = lightbulb.BotApp (
 )
 
 # START
-
-SELECT_OPTIONS = {
-  "debug_list": [ miru.SelectOption( label=i, value=i ) for i in range( 25 ) ],
-  "submission_game_select": [
-    miru.SelectOption(
-      label = f"lbl_test_1",
-      value = "test_1",
-    ),
-    miru.SelectOption(
-      label = f"lbl_test_2",
-      value = "test_2",
-    ),
-    miru.SelectOption(
-      label = f"lbl_test_3",
-      value = "test_3",
-    ),
-  ]
-}
-
-def get_select_options( key ):
-  return SELECT_OPTIONS[ key ]
-
-class SubmissionGameSelect( miru.View ):
-  @miru.text_select( placeholder="Select a Game", options=get_select_options( "debug_list" ) )
-  async def select_option( self, select, ctx ):
-    await ctx.edit_response( f"Selected > {select.values[0]}" )
-
-  @miru.button( emoji="\N{CROSS MARK}", style=hikari.ButtonStyle.DANGER )
-  async def stop_button(self, button: miru.Button, ctx: miru.ViewContext) -> None:
-    self.stop() # Stop listening for interactions
-
 @bot.command
 @lightbulb.option( "player", "Player's Twitch username" )
 @lightbulb.command( "score", "Retrieves a player's score from the scoreboard" )
@@ -125,10 +96,12 @@ async def debug_cmd( ctx ):
 async def debug_cmd( ctx ):
   """ DEBUG METHOD
   """
-  view = SubmissionGameSelect( timeout = 5 )  # Create a new view
-  message = await ctx.respond( "Find Submitter of Game", components=view )
+  view = SubmissionGameSelect( timeout = 15 )  # Create a new view
+  embed = hikari.Embed( title = f"Select a game from the list below", color = COLORS.subs )
   
-  await view.start(message)  # Start listening for interactions
+  message = await ctx.respond( embed, components=view )
+  
+  await view.start( message )  # Start listening for interactions
   await view.wait() # Optionally, wait until the view times out or gets stopped
   await ctx.delete_last_response()
 
