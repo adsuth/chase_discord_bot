@@ -102,3 +102,8 @@ def error_embed( msg ):
     title = msg,
     color = COLORS.error,
   )
+
+def debug_embed( msg ):
+  return hikari.Embed(
+    title = msg,
+  )
