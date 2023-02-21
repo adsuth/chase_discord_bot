@@ -8,12 +8,12 @@ import os
 from functools import cache
 from pprint    import pprint
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+from global_variables import SCOPES
+from global_variables import CHASE_VGM_SCOREBOARD_ID
+from global_variables import CHASE_VGM_SCOREBOARD_RANGE
 
-# The ID and range of a sample spreadsheet.
-CHASE_VGM_SCOREBOARD_ID    = "1GznrCAUaUxofszlk79bgJGEri5t1xoSzBASrXnVsLl0"
-CHASE_VGM_SCOREBOARD_RANGE = "'Detailed Scoreboard'"
+# If modifying these scopes, delete the file token.json.
+
 
 
 @cache

@@ -3,7 +3,10 @@ from time import time
 import hikari
 import lightbulb
 
-from global_variables import COLORS
+from   classes import EMBED_COLORS as COLORS
+from   global_variables import DEBUG_LOGGING_INCLUDED
+from   classes import SubmissionType
+import config as cfg
 
 def func_timer( func ):
   """
@@ -17,6 +20,21 @@ def func_timer( func ):
     print( f"Total time to run {func.__name__} >> {end_time - start_time}" )
     return output
   return wrapper
+
+def get_all_props( instance: object ) -> list[ str ]:
+  """
+  Returns a list of all keys / props in given user-defined Class instance. \n
+  This will ignore dunder methods (eg, Python's inbuilt methods)
+  """
+  return [ prop for prop in dir( instance ) if not prop.startswith( "__" ) ]
+
+def get_props( instance: object ) -> list[ str ]:
+  """
+  Returns a list of all keys / props in given user-defined Class instance. \n
+  This will ignore any Class Methods!!
+  This will ignore dunder methods (eg, Python's inbuilt methods)
+  """
+  return [ prop for prop in dir( instance ) if not prop.startswith( "__" ) and not callable( getattr( instance, prop ) ) ]
 
 def strip_excess_bonus_point_data( item ):
   """Removes extra brackets from the item. eg "10 (1)" -> "10"
@@ -107,3 +125,34 @@ def debug_embed( msg ):
   return hikari.Embed(
     title = msg,
   )
+
+def dlog( *args ):
+  """ Debug Logging. Prints only if DEBUG_LOGGING_INCLUDED has been set to True"""
+  if DEBUG_LOGGING_INCLUDED:
+    print( "\033[93m", *args, f"\033[0m" )
+
+def find_player( query: str ):
+  """ Finds player in the DATABASE dict. \n
+  When found, initialises player's data (if not done prior) \n
+  If player is unfound, will return None
+  """
+  player = cfg.DATABASE.get( query )
+
+  # break: player not found
+  if player == None:
+    return None
+  
+  player.initialise_player_data()
+  
+  print( player.name )
+  if player.name == "VorpalStorm":
+    dlog( *list( map( lambda prop: ( prop, player.__getattribute__( prop ) ), get_props( player ) ) ) )
+
+  return player
+
+def format_submissions_as_strings( subs ) -> str:
+  output = []
+  for sub in subs:
+    output.append( sub.title.replace( "(m)", "(micro)" ) if sub.type == SubmissionType.MICRO else sub.title )
+
+  return output
