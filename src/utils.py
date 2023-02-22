@@ -21,14 +21,14 @@ def func_timer( func ):
     return output
   return wrapper
 
-def get_all_props( instance: object ) -> list[ str ]:
+def get_all_props( instance ):
   """
   Returns a list of all keys / props in given user-defined Class instance. \n
   This will ignore dunder methods (eg, Python's inbuilt methods)
   """
   return [ prop for prop in dir( instance ) if not prop.startswith( "__" ) ]
 
-def get_props( instance: object ) -> list[ str ]:
+def get_props( instance ):
   """
   Returns a list of all keys / props in given user-defined Class instance. \n
   This will ignore any Class Methods!!
@@ -144,10 +144,6 @@ def find_player( query: str ):
   
   player.initialise_player_data()
   
-  print( player.name )
-  if player.name == "VorpalStorm":
-    dlog( *list( map( lambda prop: ( prop, player.__getattribute__( prop ) ), get_props( player ) ) ) )
-
   return player
 
 def format_submissions_as_strings( subs ) -> str:

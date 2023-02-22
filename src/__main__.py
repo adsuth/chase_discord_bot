@@ -10,7 +10,10 @@ from player_data      import Player
 
 from global_variables import TOKEN
 from global_variables import SERVER_ID
+from global_variables import NON_BREAK_SPACE
+from global_variables import DEBUG_LOGGING_INCLUDED
 from classes import EMBED_COLORS as COLORS
+
 
 import config as cfg
 
@@ -23,6 +26,7 @@ import utils
 from   utils import error_embed
 from   utils import find_player
 from   utils import format_submissions_as_strings
+from   utils import dlog
 
 bot = lightbulb.BotApp (
   token=TOKEN,
@@ -31,13 +35,17 @@ bot = lightbulb.BotApp (
 )
 
 # # # # # # # # # # # # # # # # # # # # # # # #
-#     SpiritBomb
+#     SpiritBomb  -  /spiritbomb
 # # # # # # # # # # # # # # # # # # # # # # # #
 @bot.command
 @lightbulb.option( "player", "Player's Twitch username" )
-@lightbulb.command( "spirit_bomb", "Reveals a player's :spiritbomb: power (total bonus points)" )
+@lightbulb.command( "spiritbomb", "Reveals a player's :spiritbomb: power (total bonus points)" )
 @lightbulb.implements( lightbulb.SlashCommand )
-async def get_player_score( ctx ):
+async def get_player_spiritbomb( ctx ):
+  """ 
+  Gets given player's spiritbomb power. \n
+  A "Spiritbomb" uses *all of the player's bonus points*
+  """
   query = ctx.options.player.strip().lower()
   player = find_player( query )
   
@@ -46,14 +54,9 @@ async def get_player_score( ctx ):
     await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ) )
     return
   
-  table_data = player.get_scores_dict_items()
-  table      = tabulate( table_data, tablefmt="plain" ) 
-  message    = f"{player.name}'s Spiritbomb is worth {player.total_bonus}"
-  
-  embed      = hikari.Embed( title = f"Scores for { player.name }", color = COLORS.score )
-  embed.add_field(f":spiritbomb:", f"{ message }")
-  
-  #send message
+  embed = hikari.Embed( title = f"Spiritbomb Power", color = COLORS.spiritbomb )
+  embed.add_field( f"{ player.name }'s :spiritbomb: is worth `\cyan {player.total_bonus_points} Points `", NON_BREAK_SPACE )
+
   await ctx.respond( embed )
 
 
@@ -145,7 +148,6 @@ def test():
   """
   print( utils.show_strings_on_new_line( "test1" ) )
   print( utils.show_strings_on_new_line( [ "a", "b", "c" ] ) )
-  print( utils.show_strings_on_new_line( [  ] ) )
 
 if __name__ == "__main__":
   main()
