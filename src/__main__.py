@@ -43,7 +43,7 @@ bot = lightbulb.BotApp (
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_spiritbomb( ctx ):
   """ 
-  Gets given player's spiritbomb power. \n
+  Gets given player's Spiritbomb power. \n
   A "Spiritbomb" uses *all of the player's bonus points*
   """
   query = ctx.options.player.strip().lower()
