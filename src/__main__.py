@@ -23,8 +23,9 @@ from retrieve_sheet   import retrieve_values
 from player_data      import parse_raw_data
 
 import utils
-from   utils import error_embed
+from   utils import error_embed, pl
 from   utils import find_player
+from   utils import player_not_found
 from   utils import format_submissions_as_strings
 from   utils import dlog
 
@@ -54,11 +55,38 @@ async def get_player_spiritbomb( ctx ):
     await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ) )
     return
   
+  point_word_string = pl( "Point", player.total_bonus_points )
   embed = hikari.Embed( title = f"Spiritbomb Power", color = COLORS.spiritbomb )
-  embed.add_field( f"{ player.name }'s :spiritbomb: is worth `\cyan {player.total_bonus_points} Points `", NON_BREAK_SPACE )
+  embed.add_field( f"{ player.name }'s :spiritbomb: is worth ` {player.total_bonus_points} {point_word_string} `", NON_BREAK_SPACE )
 
   await ctx.respond( embed )
 
+
+# # # # # # # # # # # # # # # # # # # # # # # #
+#     Balance - /balance
+# # # # # # # # # # # # # # # # # # # # # # # #
+@bot.command
+@lightbulb.option( "player", "Player's Twitch username" )
+@lightbulb.command( "balance", "Reveals a player's total spendable points" )
+@lightbulb.implements( lightbulb.SlashCommand )
+async def get_player_spiritbomb( ctx ):
+  """ 
+  Gets given player's total spendable points. \n
+  This includes Total Points, and the sum of all bonus point categories.
+  """
+  query = ctx.options.player.strip().lower()
+  player = find_player( query )
+  
+  # break: player not found
+  if player_not_found( player ):
+    await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ) )
+    return
+  
+  point_word_string = pl( "Point", player.balance )
+  embed = hikari.Embed( title = f"💰 Total Point Balance", color = COLORS.score )
+  embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", NON_BREAK_SPACE )
+
+  await ctx.respond( embed )
 
 
 @bot.command
@@ -100,15 +128,16 @@ async def get_player_submissions( ctx ):
   
   player.initialise_player_data()
   
+  # TODO: maybe limit the number of list items?
   data = utils.bullet_list_strings( format_submissions_as_strings( player.get_submissions() ) )
-  # maybe limit the number of list items?
   
   if len( data ) < 1:
     await ctx.respond( error_embed( f"{ player.name } hasn't submitted any games..." ) )
     return
   
+  monospaced = f"```{data}```"
   embed = hikari.Embed( title = f"{ player.name }'s submissions", color = COLORS.subs )
-  embed.add_field(f"🎮", f"{ data }")
+  embed.add_field(f"🎮", f"{ monospaced }")
   
   #send message
   await ctx.respond( embed )

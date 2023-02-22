@@ -110,8 +110,9 @@ def show_strings_on_new_line( arr ):
   return "".join( list( mapped_arr ) ) + arr[-1]
 
 def bullet_list_strings( arr ):
-  mapped_arr = map( lambda item: f"* {item}", arr )
+  mapped_arr = map( lambda item: f"‣ {item}", arr )
   return "\n".join( list( mapped_arr ) )
+
 
 
 
@@ -146,9 +147,59 @@ def find_player( query: str ):
   
   return player
 
+def pad_string( string: str, length: int, padding_char: str = " " ) -> str:
+  """
+  ( "abc", 5, "x" ) \n
+  Returns           \n
+  "abcxx"
+  """
+  string_length = len( string )
+  amount        = length - string_length
+
+  # break: string isnt valid for padding, return input string by default
+  if amount < 1:
+    return string
+  
+  return string + padding_char * amount
+
 def format_submissions_as_strings( subs ) -> str:
-  output = []
+  """
+  Strings generated *use padding*.\n
+  They should be displayed with a `monospace font` 
+  """
+  output           = []
+  max_sub_length   = get_longest_string_length( list( map( lambda sub: sub.name.replace( " (m)", "" ), subs ) ) )
+
   for sub in subs:
-    output.append( sub.title.replace( "(m)", "(micro)" ) if sub.type == SubmissionType.MICRO else sub.title )
+    string = pad_string( sub.name, max_sub_length )
+    
+    if sub.type == SubmissionType.MICRO:
+      string += " M"
+    
+    output.append( string )
 
   return output
+
+def player_not_found( player: object ) -> bool:
+  """
+  Semantic way of checking if player is None
+  """
+  return player == None
+
+def get_longest_string_length( arr: list[ str ] ) -> int:
+  """
+  Returns the SIZE of the longest string in a given list
+  """
+  return len( max( arr, key=len ) )
+
+def pl( word: str, amount: int, plural_suffix: str = "s" ) -> str:
+  """
+  Pluralises a word if neeeded
+  """
+  return word if amount == 1 else word + plural_suffix
+
+def pluralise( word: str, amount: int, plural_suffix: str = "s" ) -> str:
+  """
+  Pluralises a word if neeeded
+  """
+  return pl( word, amount, plural_suffix )

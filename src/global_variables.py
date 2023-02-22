@@ -15,7 +15,9 @@ CHASE_VGM_SCOREBOARD_ID     = os.getenv( "CHASE_VGM_SCOREBOARD_ID" )
 CHASE_VGM_SCOREBOARD_RANGE  = os.getenv( "CHASE_VGM_SCOREBOARD_RANGE")
 
 NON_BREAK_SPACE             = "** **"
+NO_OF_SCORE_DATA_COLUMNS    = 20
 
 DEBUG_LOGGING_INCLUDED = True
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+

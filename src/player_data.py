@@ -1,5 +1,8 @@
-from utils import score_list_to_int
+from utils import dlog, score_list_to_int
 from utils import score_to_int
+from utils import get_longest_string_length
+
+from global_variables import NO_OF_SCORE_DATA_COLUMNS
 
 from classes import SubmissionType
 
@@ -17,9 +20,9 @@ class Player:
     """
     Mini-class, just to store the type of submission. 
     """
-    def __init__( self, title : str, type : SubmissionType ):
-      self.title = title
-      self.type  = type
+    def __init__( self, name : str, type : SubmissionType ):
+      self.name = name
+      self.type = type
   
   def initialise_player_data( self ) -> None:
     """
@@ -30,6 +33,9 @@ class Player:
     
     self._defined_in_session = True
     data = self.raw
+    data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
+
+    dlog( data )
     
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
     self.AVP                = score_to_int( data[ 13 ] ) # Additional Voting Power
@@ -47,7 +53,7 @@ class Player:
       self.crown_points,
       self.bonus_points,
     ) )
-    self.real_total         = self.total_points + self.total_bonus_points
+    self.balance         = self.total_points + self.total_bonus_points
 
     self.regular_submissions, self.micro_submissions = parse_submissions( data[ 20: ] ) # List of submissions 
   
@@ -55,12 +61,6 @@ class Player:
     return {
       "Name": self.name,
       "Total Points": self.total_points,
-    }
-  
-  def get_scores_dict( self ):
-    return {
-      "Total Points":               self.total_points,
-      "Total Points (incl. Bonus)": self.real_total,
     }
   
   def get_submissions( self ) -> list[ Submission ]:
@@ -85,11 +85,12 @@ def parse_submissions( raw_subs: list[str] ) -> tuple[Player.Submission, Player.
   """
   Returns two lists, regular and micro submissions.
   """
-  regular_subs = []
-  micro_subs   = []
+  regular_subs    = []
+  micro_subs      = []
 
   for sub in raw_subs:
     if "(m)" in sub:
+      sub = sub.replace( " (m)", "" )
       micro_subs.append( Player.Submission( sub, SubmissionType.MICRO ) )
       continue
       
