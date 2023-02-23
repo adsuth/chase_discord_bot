@@ -147,7 +147,7 @@ def find_player( query: str ):
   
   return player
 
-def pad_string( string: str, length: int, padding_char: str = " " ) -> str:
+def pad_string( string: str, length: int, pad_start: bool = False, padding_char: str = " " ) -> str:
   """
   ( "abc", 5, "x" ) \n
   Returns           \n
@@ -160,7 +160,12 @@ def pad_string( string: str, length: int, padding_char: str = " " ) -> str:
   if amount < 1:
     return string
   
-  return string + padding_char * amount
+  if pad_start:
+    string = padding_char * amount + string
+  else:
+    string = string + padding_char * amount
+  
+  return string
 
 def format_submissions_as_strings( subs ) -> str:
   """
@@ -174,7 +179,7 @@ def format_submissions_as_strings( subs ) -> str:
     string = pad_string( sub.name, max_sub_length )
     
     if sub.type == SubmissionType.MICRO:
-      string += " M"
+      string += " Ⓜ️"
     
     output.append( string )
 
@@ -190,6 +195,7 @@ def get_longest_string_length( arr: list[ str ] ) -> int:
   """
   Returns the SIZE of the longest string in a given list
   """
+  dlog( arr )
   return len( max( arr, key=len ) )
 
 def pl( word: str, amount: int, plural_suffix: str = "s" ) -> str:

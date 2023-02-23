@@ -35,8 +35,6 @@ class Player:
     data = self.raw
     data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
 
-    dlog( data )
-    
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
     self.AVP                = score_to_int( data[ 13 ] ) # Additional Voting Power
     self.sub_points         = score_to_int( data[ 14 ] ) # Subscriber Points
@@ -56,18 +54,20 @@ class Player:
     self.balance         = self.total_points + self.total_bonus_points
 
     self.regular_submissions, self.micro_submissions = parse_submissions( data[ 20: ] ) # List of submissions 
+    self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
   
-  def __dict__( self ) -> dict[ str, any ]:
+  def get_bonus_dict( self ) -> dict[ str: str ]:
     return {
-      "Name": self.name,
-      "Total Points": self.total_points,
+      "Additional Voting Power": self.AVP,
+      "Subscriber Points":       self.sub_points,
+      "Server Boost Points":     self.boost_points,
+      "Competition Points":      self.comp_points,
+      "Gold Crown Points":     self.crown_points,
+      "Bonus Points":            self.bonus_points,
     }
   
-  def get_submissions( self ) -> list[ Submission ]:
-    return self.regular_submissions + self.micro_submissions
-  
-  def get_scores_dict_items( self ):
-    return self.get_scores_dict().items()
+  def get_bonus_dict_items( self ):
+    return self.get_bonus_dict().items()
 
 
 def parse_raw_data( raw_data: str ) -> dict[Player]:
