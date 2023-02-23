@@ -85,7 +85,7 @@ async def get_player_spiritbomb( ctx ):
     return
   
   point_word_string = pl( "Point", player.balance )
-  embed = hikari.Embed( title = f"Total Point Balance 💰", color = COLORS.score )
+  embed = hikari.Embed( title = f"💰 Total Point Balance", color = COLORS.balance )
   embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", NON_BREAK_SPACE )
   embed.set_footer( f"Requested by: {ctx.author.username}" )
 
