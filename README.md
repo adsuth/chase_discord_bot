@@ -23,15 +23,3 @@ This will generate a `token.json` file. Provided you have that file, you should 
 To begin the app, run:
 
 `python src`
-
-## Roadmap
-
-### Major
-- Add fancy visuals
-- Actually show the correct data
-- Add command to show unspent points
-- Add a name dropdown (with a filter if possible)
-  - could check if the users discord username matches a record in the db?
-
-### Minor
-- Allow Chasers to lookup their original usernames instead of their chaser titles
