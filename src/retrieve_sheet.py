@@ -57,7 +57,7 @@ def retrieve_values():
             print("No data found.")
             return
 
-        return values
+        return values[1:]
         
     except HttpError as err:
         print(err)

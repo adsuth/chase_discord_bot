@@ -3,8 +3,8 @@ from time import time
 import hikari
 import lightbulb
 
-from   classes import EMBED_COLORS as COLORS
-from   global_variables import DEBUG_LOGGING_INCLUDED
+from   classes import EMBED_COLORS as COLORS, Alias, AliasType
+from   global_variables import CHASER_ALIASES, DEBUG_LOGGING_INCLUDED
 from   classes import SubmissionType
 import config as cfg
 
@@ -14,7 +14,7 @@ def func_timer( func ):
   """
   def wrapper():
     start_time = time()
-    output = func()
+    output     = func()
     end_time   = time()
     
     print( f"Total time to run {func.__name__} >> {end_time - start_time}" )
@@ -132,12 +132,33 @@ def dlog( *args ):
   if DEBUG_LOGGING_INCLUDED:
     print( "\033[93m", *args, f"\033[0m" )
 
+def get_chaser_alias_key( query: str ) -> bool:
+  alias = CHASER_ALIASES.find( query )
+  
+  if alias == None:
+    return None
+  
+  if alias.type == AliasType.PLAYER:
+    return CHASER_ALIASES.get( query ).key
+
+  return alias.key
+
 def find_player( query: str ):
   """ Finds player in the DATABASE dict. \n
   When found, initialises player's data (if not done prior) \n
   If player is unfound, will return None
   """
+  chaser_alias_key = get_chaser_alias_key( query )
+  
+  if chaser_alias_key != None:
+    query = chaser_alias_key
+  
   player = cfg.DATABASE.get( query )
+  
+  # find chaser alias
+  if player == None:
+    alias  = CHASER_ALIASES.get( query )
+    player = cfg.DATABASE.get( alias.key ) if alias != None else None
 
   # break: player not found
   if player == None:
@@ -147,7 +168,7 @@ def find_player( query: str ):
   
   return player
 
-def pad_string( string: str, length: int, pad_start: bool = False, padding_char: str = " " ) -> str:
+def pad_string( string: str, length: int, pad_start: bool = False, padding_char: str = " " ):
   """
   ( "abc", 5, "x" ) \n
   Returns           \n
@@ -198,6 +219,8 @@ def get_longest_string_length( arr: list[ str ] ) -> int:
   dlog( arr )
   return len( max( arr, key=len ) )
 
+
+
 def pl( word: str, amount: int, plural_suffix: str = "s" ) -> str:
   """
   Pluralises a word if neeeded
@@ -209,3 +232,61 @@ def pluralise( word: str, amount: int, plural_suffix: str = "s" ) -> str:
   Pluralises a word if neeeded
   """
   return pl( word, amount, plural_suffix )
+
+
+def cast_to_class( input, class_type=None ):
+  if class_type == None:
+    class_type = lambda input: input
+
+  return class_type( input )
+
+def check_for_chaser_alias( alias_key: str ):
+  """Checks if the given key needs to be hanlded as a CHASER
+  """
+  if CHASER_ALIASES.get( alias_key ) == None:
+    return False
+  
+  if CHASER_ALIASES.find( alias_key ).key in cfg.HANDLED_CHASERS:
+    return False
+  
+  if CHASER_ALIASES.get(  alias_key ).key in cfg.HANDLED_CHASERS:
+    return False
+  
+  return True
+
+def handle_chaser_alias( alias_key: str ):  
+  # we won't know what key is which yet
+  keys = [ CHASER_ALIASES.find( alias_key ), CHASER_ALIASES.get( alias_key ) ]
+
+  # determine what each key is
+  player_alias = keys[0] if keys[0].type == AliasType.PLAYER else keys[1]
+  chaser_alias = keys[1] if keys[1].type == AliasType.CHASER else keys[0]
+  
+  # get the data
+  player_data = cfg.DATABASE.get( player_alias.key )
+  chaser_data = cfg.DATABASE.get( chaser_alias.key )
+  
+  # prevent redoing this process
+  cfg.HANDLED_CHASERS.append( player_alias.key )
+  cfg.HANDLED_CHASERS.append( chaser_alias.key )
+    
+  # init player data if we haven't already
+  player_data.initialise_player_data()
+  chaser_data.initialise_player_data()
+
+  # add PLAYER points to CHASER  
+  chaser_data.total_points += player_data.total_points
+  
+  # add PLAYER subs to CHASER
+  chaser_data.regular_submissions += player_data.regular_submissions
+  chaser_data.micro_submissions   += player_data.micro_submissions
+  
+  # recalc stuff like the balance and subs
+  chaser_data.update_calc_values()
+  
+  cfg.DATABASE.pop( player_alias.key )
+  cfg.DATABASE.update( { chaser_alias.key: chaser_data } )
+  
+  
+  
+    

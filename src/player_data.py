@@ -1,8 +1,8 @@
-from utils import dlog, score_list_to_int
+from utils import check_for_chaser_alias, dlog, handle_chaser_alias, score_list_to_int
 from utils import score_to_int
 from utils import get_longest_string_length
 
-from global_variables import NO_OF_SCORE_DATA_COLUMNS
+from global_variables import CHASER_ALIASES, NO_OF_SCORE_DATA_COLUMNS
 
 from classes import SubmissionType
 
@@ -14,6 +14,7 @@ class Player:
     # todo : this is not reflective of final structure
     self.raw   = raw
     self.name  = name
+    self.key   = name.lower().strip()
     self._defined_in_session = False
 
   class Submission:
@@ -23,11 +24,20 @@ class Player:
     def __init__( self, name : str, type : SubmissionType ):
       self.name = name
       self.type = type
+    
+    def __str__( self ):
+      return self.name
   
+  def update_calc_values( self ):
+    self.balance     = self.total_points + self.total_bonus_points
+    self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
+    # TODO  - we'll need to update the "cost of submission" change when its added
+    
   def initialise_player_data( self ) -> None:
     """
     Initialises player data, assuming it has not done so prior.
     """
+    # TODO  - We may need to redefine our data in the same session (scoreboard updates)
     if self._defined_in_session:
       return
     
@@ -51,10 +61,12 @@ class Player:
       self.crown_points,
       self.bonus_points,
     ) )
-    self.balance         = self.total_points + self.total_bonus_points
 
     self.regular_submissions, self.micro_submissions = parse_submissions( data[ 20: ] ) # List of submissions 
-    self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
+    self.update_calc_values()
+
+    if check_for_chaser_alias( self.key ):
+      handle_chaser_alias( self.key )
   
   def get_bonus_dict( self ) -> dict[ str: str ]:
     return {
@@ -68,16 +80,20 @@ class Player:
   
   def get_bonus_dict_items( self ):
     return self.get_bonus_dict().items()
-
+  
+  
 
 def parse_raw_data( raw_data: str ) -> dict[Player]:
   """
   Parses raw player data, returning a dict of Player objects
   """
   output = {}
+  
   for row in raw_data:
     key, name = row[0].lower(), row[0]
+  
     output[ key ] = Player( row, name )
+        
   return output
 
 

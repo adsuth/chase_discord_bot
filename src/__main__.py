@@ -8,11 +8,11 @@ from tabulate         import tabulate
 # My methods
 from player_data      import Player
 
-from global_variables import TOKEN
+from global_variables import CHASER_ALIASES, TOKEN
 from global_variables import SERVER_ID
 from global_variables import NON_BREAK_SPACE
 from global_variables import DEBUG_LOGGING_INCLUDED
-from classes import EMBED_COLORS as COLORS
+from classes import EMBED_COLORS as COLORS, Alias, AliasType
 
 
 import config as cfg
@@ -50,7 +50,7 @@ async def get_player_spiritbomb( ctx ):
   """
   query = ctx.options.player.strip().lower()
   player = find_player( query )
-  
+    
   # break: player not found
   if player == None:
     await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ) )
@@ -203,8 +203,13 @@ def main():
 def test():
   """ Debug method, dont use this in production.
   """
-  print( utils.show_strings_on_new_line( "test1" ) )
-  print( utils.show_strings_on_new_line( [ "a", "b", "c" ] ) )
+  from classes import duodict
+  
+  test_dict  = duodict( { Alias( "The Collector", AliasType.CHASER ): Alias( "Aakadarr", AliasType.PLAYER ) } )
+  
+  pprint( test_dict )
+  pprint( test_dict.get( "Aakadarr" ) )
+  pprint( test_dict.get( "the cOLLector" ) )
 
 if __name__ == "__main__":
   main()
