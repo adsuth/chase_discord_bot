@@ -23,7 +23,7 @@ from retrieve_sheet   import retrieve_values
 from player_data      import parse_raw_data
 
 import utils
-from   utils import error_embed, pad_string, pl
+from   utils import error_embed, get_can_afford_micro_string, get_can_afford_regular_string, pad_string, pl
 from   utils import find_player
 from   utils import player_not_found
 from   utils import format_submissions_as_strings
@@ -84,9 +84,17 @@ async def get_player_spiritbomb( ctx ):
     await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ) )
     return
   
+  cost_of_sub = player.calc_cost_of_submision()
+  
   point_word_string = pl( "Point", player.balance )
   embed = hikari.Embed( title = f"💰 Total Point Balance", color = COLORS.balance )
+  
   embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", NON_BREAK_SPACE )
+  embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
+  embed.add_field( f"Next Regular Submission will cost ` {cost_of_sub} Points `. ", get_can_afford_regular_string( player, cost_of_sub ) )
+  embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
+  embed.add_field( f"Micro Submissions cost ` {100} Points ` *per track* (max of 4 tracks)", get_can_afford_micro_string( player ) )
+
   embed.set_footer( f"Requested by: {ctx.author.username}" )
 
   # success: send message

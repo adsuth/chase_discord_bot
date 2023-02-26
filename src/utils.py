@@ -1,3 +1,4 @@
+import re
 from time import time
 
 import hikari
@@ -37,7 +38,7 @@ def get_props( instance ):
   return [ prop for prop in dir( instance ) if not prop.startswith( "__" ) and not callable( getattr( instance, prop ) ) ]
 
 def strip_excess_bonus_point_data( item ):
-  """Removes extra brackets from the item. eg "10 (1)" -> "10"
+  """Removes extra brackets from the item. eg "10 (1)" -> "10" (and also ! for the sub column)
 
   Args:
       item (str): candidate
@@ -45,14 +46,7 @@ def strip_excess_bonus_point_data( item ):
   Returns:
       str: item without the ()
   """
-  startingIndex = item.find( "(" )
-  
-  if ( startingIndex == -1 ):
-    return item
-  
-  startingIndex -= 1 # get to the space
-  
-  return item[ :startingIndex ]
+  return re.sub("[^0-9]", "", item )
     
   
 def score_to_int( item ):
@@ -65,7 +59,7 @@ def score_to_int( item ):
       int: the converted int. 0 if item was an empty string 
   """
   if item == "":
-    item = "0"
+    item = "0"     
   
   item = strip_excess_bonus_point_data( item ) # some cols appear as "10 (1)" for example
   
@@ -133,7 +127,7 @@ def dlog( *args ):
     print( "\033[93m", *args, f"\033[0m" )
 
 def get_chaser_alias_key( query: str ) -> bool:
-  alias = CHASER_ALIASES.find( query )
+  alias = CHASER_ALIASES.get( query )
   
   if alias == None:
     return None
@@ -288,5 +282,23 @@ def handle_chaser_alias( alias_key: str ):
   cfg.DATABASE.update( { chaser_alias.key: chaser_data } )
   
   
+def get_can_afford_regular_string( player: object, cost: int ) -> str:
+  if player.balance >= cost:
+    return f"✅ {player.name} can afford another regular submission! "
+
+  return f"❌ {player.name} cannot afford another regular submission. "
   
-    
+def get_can_afford_micro_string( player: object ) -> str:
+  if player.balance < 100:
+    return f"❌ {player.name} cannot afford a micro submission. "
+  
+  if player.balance < 200:
+    return f"🆗 {player.name} can afford a micro submission with **1 track**. "
+
+  if player.balance < 300:
+    return f"🆗 {player.name} can afford a micro submission with **2 tracks**. "
+
+  if player.balance < 400:
+    return f"🆗 {player.name} can afford a micro submission with **3 tracks**. "
+  
+  return f"✅ {player.name} can afford a **full** micro submission! "

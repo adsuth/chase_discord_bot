@@ -29,7 +29,7 @@ class Player:
       return self.name
   
   def update_calc_values( self ):
-    self.balance     = self.total_points + self.total_bonus_points
+    self.balance     = self.total_points
     self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
     # TODO  - we'll need to update the "cost of submission" change when its added
     
@@ -62,6 +62,7 @@ class Player:
       self.bonus_points,
     ) )
 
+    self.will_earn_avp_with_sub = False
     self.regular_submissions, self.micro_submissions = parse_submissions( data[ 20: ] ) # List of submissions 
     self.update_calc_values()
 
@@ -81,7 +82,20 @@ class Player:
   def get_bonus_dict_items( self ):
     return self.get_bonus_dict().items()
   
-  
+  def calc_cost_of_submision( self ):
+    no_of_subs = len( self.regular_submissions )
+    
+    if no_of_subs == 0:
+      return 100
+        
+    if no_of_subs < 4:
+      return no_of_subs * 100
+    
+    if no_of_subs == 4:
+      self.will_earn_avp_with_sub = True
+    
+    return 500   
+     
 
 def parse_raw_data( raw_data: str ) -> dict[Player]:
   """
