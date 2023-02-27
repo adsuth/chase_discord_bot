@@ -3,8 +3,9 @@ from utils import score_to_int
 from utils import get_longest_string_length
 
 from global_variables import CHASER_ALIASES, NO_OF_SCORE_DATA_COLUMNS
+import config as cfg
 
-from classes import SubmissionType
+from classes import Submission, SubmissionType
 
 class Player:
   """
@@ -16,18 +17,10 @@ class Player:
     self.name  = name
     self.key   = name.lower().strip()
     self._defined_in_session = False
-
-  class Submission:
-    """
-    Mini-class, just to store the type of submission. 
-    """
-    def __init__( self, name : str, type : SubmissionType ):
-      self.name = name
-      self.type = type
     
-    def __str__( self ):
-      return self.name
-  
+    self.regular_submissions = []
+    self.micro_submissions = []
+      
   def update_calc_values( self ):
     self.balance     = self.total_points
     self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
@@ -63,7 +56,6 @@ class Player:
     ) )
 
     self.will_earn_avp_with_sub = False
-    self.regular_submissions, self.micro_submissions = parse_submissions( data[ 20: ] ) # List of submissions 
     self.update_calc_values()
 
     if check_for_chaser_alias( self.key ):
@@ -101,29 +93,41 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
   """
   Parses raw player data, returning a dict of Player objects
   """
-  output = {}
+  output       = {}
+  subbed_games = []
   
   for row in raw_data:
     key, name = row[0].lower(), row[0]
   
     output[ key ] = Player( row, name )
-        
+    
+    # add subbed games if there are any
+    if len( row ) > 19:
+      subs = parse_submissions( row[20:], name )
+      output[ key ].regular_submissions = subs[0]
+      output[ key ].micro_submissions   = subs[1]
+      
+      subbed_games += subs[0] + subs[1]
+
+  cfg.GAME_LIST = sorted( subbed_games, key=lambda key: key.name )
+  
+  
   return output
 
 
-def parse_submissions( raw_subs: list[str] ) -> tuple[Player.Submission, Player.Submission]:
+def parse_submissions( raw_subs: list[str], player: str ) -> tuple[Submission, Submission]:
   """
   Returns two lists, regular and micro submissions.
   """
   regular_subs    = []
   micro_subs      = []
 
-  for sub in raw_subs:
-    if "(m)" in sub:
-      sub = sub.replace( " (m)", "" )
-      micro_subs.append( Player.Submission( sub, SubmissionType.MICRO ) )
-      continue
-      
-    regular_subs.append( Player.Submission( sub, SubmissionType.REGULAR ) )
+  for item in raw_subs:
+    sub = Submission( item, player )
+    
+    if sub.type == SubmissionType.MICRO:
+      micro_subs.append( sub )
+    else:
+      regular_subs.append( sub )
 
   return regular_subs, micro_subs

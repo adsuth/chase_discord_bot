@@ -14,10 +14,16 @@ load_dotenv()
 TOKEN                       = os.getenv( "TOKEN" )
 SERVER_ID                   = int( os.getenv( "SERVER_ID" ) )
 CHASE_VGM_SCOREBOARD_ID     = os.getenv( "CHASE_VGM_SCOREBOARD_ID" )
-CHASE_VGM_SCOREBOARD_RANGE  = os.getenv( "CHASE_VGM_SCOREBOARD_RANGE")
+CHASE_VGM_SCOREBOARD_RANGE  = os.getenv( "CHASE_VGM_SCOREBOARD_RANGE" )
 
 NON_BREAK_SPACE             = "** **"
 NO_OF_SCORE_DATA_COLUMNS    = 20
+MAX_NO_OF_SELECT_OPTIONS    = 25
+
+ADMIN_IDS                   = (
+  102754917298507776, # Quetz
+  # Room for more if Quetz wants to grant admin privileges to other users (chasers maybe?)
+)
 
 DEBUG_LOGGING_INCLUDED = True
 CHASER_ALIASES         = duodict({

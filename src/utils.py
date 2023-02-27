@@ -213,8 +213,6 @@ def get_longest_string_length( arr: list[ str ] ) -> int:
   dlog( arr )
   return len( max( arr, key=len ) )
 
-
-
 def pl( word: str, amount: int, plural_suffix: str = "s" ) -> str:
   """
   Pluralises a word if neeeded
@@ -227,15 +225,19 @@ def pluralise( word: str, amount: int, plural_suffix: str = "s" ) -> str:
   """
   return pl( word, amount, plural_suffix )
 
-
-def cast_to_class( input, class_type=None ):
+def cast_to_class( input, class_type = None ):
+  """
+  Cast given input to a different, passed type. \n
+  Prevent issues with casting on a NoneType object.
+  """
   if class_type == None:
     class_type = lambda input: input
 
   return class_type( input )
 
 def check_for_chaser_alias( alias_key: str ):
-  """Checks if the given key needs to be hanlded as a CHASER
+  """
+  Checks if the given key needs to be hanlded as a CHASER
   """
   if CHASER_ALIASES.get( alias_key ) == None:
     return False
@@ -248,7 +250,10 @@ def check_for_chaser_alias( alias_key: str ):
   
   return True
 
-def handle_chaser_alias( alias_key: str ):  
+def handle_chaser_alias( alias_key: str ) -> None:  
+  """
+  "Merges" PLAYER and CHASER names into one and handles knock-ons
+  """
   # we won't know what key is which yet
   keys = [ CHASER_ALIASES.find( alias_key ), CHASER_ALIASES.get( alias_key ) ]
 
@@ -275,6 +280,8 @@ def handle_chaser_alias( alias_key: str ):
   chaser_data.regular_submissions += player_data.regular_submissions
   chaser_data.micro_submissions   += player_data.micro_submissions
   
+  # TODO: - We'll need to reassign the Submitters of each submission later
+  
   # recalc stuff like the balance and subs
   chaser_data.update_calc_values()
   
@@ -283,12 +290,19 @@ def handle_chaser_alias( alias_key: str ):
   
   
 def get_can_afford_regular_string( player: object, cost: int ) -> str:
+  """
+  Checks to see if the `player`'s balance is within the brackets for regular subs. 
+  """
   if player.balance >= cost:
     return f"✅ {player.name} can afford another regular submission! "
 
   return f"❌ {player.name} cannot afford another regular submission. "
   
+  
 def get_can_afford_micro_string( player: object ) -> str:
+  """
+  Checks to see if the `player`'s balance is within the brackets for micro subs. 
+  """
   if player.balance < 100:
     return f"❌ {player.name} cannot afford a micro submission. "
   
@@ -302,3 +316,9 @@ def get_can_afford_micro_string( player: object ) -> str:
     return f"🆗 {player.name} can afford a micro submission with **3 tracks**. "
   
   return f"✅ {player.name} can afford a **full** micro submission! "
+
+
+def generic_embed( ctx, title: str, color: COLORS ) -> hikari.Embed:
+  embed = hikari.Embed( title = title, color = color )
+  embed.set_footer( f"Requested by: { ctx.author.username }" )
+  return embed

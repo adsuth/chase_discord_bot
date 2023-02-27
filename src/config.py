@@ -7,3 +7,4 @@
 
 DATABASE        = {}
 HANDLED_CHASERS = []
+GAME_LIST       = []

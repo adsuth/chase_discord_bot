@@ -16,14 +16,15 @@ from classes import EMBED_COLORS as COLORS, Alias, AliasType
 
 
 import config as cfg
+from views.components import CloseButton, WhoSubbedSelect
 
-from views.sel_submission_game import SubmissionGameSelect
+from views.who_subbed_select import convert_to_options, filter_sub_list
 
 from retrieve_sheet   import retrieve_values
 from player_data      import parse_raw_data
 
 import utils
-from   utils import error_embed, get_can_afford_micro_string, get_can_afford_regular_string, pad_string, pl
+from   utils import debug_embed, error_embed, generic_embed, get_can_afford_micro_string, get_can_afford_regular_string, pad_string, pl
 from   utils import find_player
 from   utils import player_not_found
 from   utils import format_submissions_as_strings
@@ -168,7 +169,7 @@ async def get_player_submissions( ctx ):
   title_string = "%s has submitted %d %s" % ( player.name, no_of_submissions, pl( "Game", no_of_submissions ) )
   
   # step: create embed
-  embed = hikari.Embed( title = f":joystick: { player.name }'s Submissions", color = COLORS.subs )
+  embed = hikari.Embed( title = f" { player.name }'s Submissions", color = COLORS.subs )
   embed.add_field(
     title_string,
     desc_string
@@ -179,33 +180,54 @@ async def get_player_submissions( ctx ):
   await ctx.respond( embed )
 
 
-@bot.command
-@lightbulb.command( "test user command", "DEBUG COMMAND > This is just to test certain functionality" )
-@lightbulb.implements( lightbulb.UserCommand )
-async def debug_cmd( ctx ):
-  """ DEBUG METHOD
-  """
-  await ctx.respond( f"Your user ID is >> { ctx.options.target.id }" )
 
+# # # # # # # # # # # # # # # # # # # # # # # #
+#     Who Subbed   - /who_subbed
+# # # # # # # # # # # # # # # # # # # # # # # #
 @bot.command
-@lightbulb.command( "debug", "DEBUG COMMAND > This is just to test certain functionality" )
+@lightbulb.option( "game", "Name of the game to find" )
+@lightbulb.command( "who_subbed", "Find out who subbed a certain game. " )
 @lightbulb.implements( lightbulb.SlashCommand )
-async def debug_cmd( ctx ):
-  """ DEBUG METHOD
-  """
-  view = SubmissionGameSelect( timeout = 15 )  # Create a new view
-  embed = hikari.Embed( title = f"Select a game from the list below", color = COLORS.subs )
+async def get_who_subbed( ctx ):
+  query = ctx.options.game.strip().lower()
+  view  = miru.View( timeout = 60 )
+  embed = generic_embed( ctx, f"🕹️  Who Submitted?", COLORS.who_subbed )
   
+  filtered_games = filter_sub_list( query, cfg.GAME_LIST, 25 )
+  
+  # break: no matches found
+  if len( filtered_games ) == 0:
+    await ctx.respond( error_embed( f"No games found with query \"{query}\"... " ) )
+    return
+   
+  # break: direct match
+  if len( filtered_games ) == 1:
+    sub = filtered_games[ 0 ]
+
+    embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
+    await ctx.respond( embed )
+    
+    return
+  
+  # step: get user to specify game with dropdown
+  options = convert_to_options( filtered_games )
+  view.add_item( WhoSubbedSelect( options = options ) )
+  view.add_item( CloseButton() )  
+  
+  embed.add_field( "Confirm Game", f"Multiple possible results for \"{ query }\".\nPlease clarify with the below selection. " )
   message = await ctx.respond( embed, components=view )
   
-  await view.start( message )  # Start listening for interactions
-  await view.wait() # Optionally, wait until the view times out or gets stopped
+  await view.start( message )
+  await view.wait()
+  
+  view.clear_items()
+  
   await ctx.delete_last_response()
 
 
 def main():
   cfg.DATABASE = parse_raw_data( retrieve_values() )
-  miru.install( bot ) # Load miru and attach it to the bot instance.
+  miru.install( bot )
   bot.run()
   
 def test():

@@ -8,6 +8,7 @@ class EMBED_COLORS:
   bonus       = 0xfdd888
   balance     = 0xfdd888
   subs        = 0x2eff43
+  who_subbed  = 0x2eff43
   spiritbomb  = 0x62efff
   cyan      = 0x62efff
 
@@ -80,4 +81,16 @@ class duodict:
     key    = key.lower().strip()
     my_key = self.data.get( key, default ).key
     return self.data.get( my_key )
+
     
+class Submission:
+    """
+    Mini-class, just to store the type of submission. 
+    """
+    def __init__( self, raw: str, submitter: str ) -> None:
+      self.type      = SubmissionType.REGULAR if "(m)" not in raw else SubmissionType.MICRO
+      self.submitter = submitter
+      self.name      = raw.replace( " (m)", "" )
+    
+    def __str__( self ):
+      return self.name
