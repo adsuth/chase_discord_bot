@@ -3,7 +3,7 @@ import miru
 
 import sys
 
-from utils import generic_embed
+from utils import dlog, error_embed, generic_embed, get_from_list
 sys.path.append( "../" )
 
 from global_variables import NON_BREAK_SPACE
@@ -22,18 +22,20 @@ class CloseButton( miru.Button ):
 
 
 
+
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Selections
 # # # # # # # # # # # # # # # # # # # # # # # #
 class WhoSubbedSelect( miru.TextSelect ):
   def __init__( self, options: list[ str ] ) -> None:
-    super().__init__( options = options )
+    super().__init__( placeholder = "Select a Game", options = options )
   
-  @miru.text_select
-  async def callback( self, select, ctx ) -> None:
-    sub = cfg.GAME_LIST.get( select.values[0] )
+  async def callback( self, ctx: miru.ViewContext ) -> None:
+    index = get_from_list( self.values[0], [ item.key for item in cfg.GAME_LIST ] )
+    sub   = cfg.GAME_LIST[ index ]  
     
     embed = generic_embed( ctx, "🕹️  Who Submitted?", COLORS.who_subbed )
     embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
     
-    await ctx.message.edit( embed = embed )
+    await ctx.message.delete()
+    await ctx.message.respond( embed = embed )

@@ -210,7 +210,6 @@ def get_longest_string_length( arr: list[ str ] ) -> int:
   """
   Returns the SIZE of the longest string in a given list
   """
-  dlog( arr )
   return len( max( arr, key=len ) )
 
 def pl( word: str, amount: int, plural_suffix: str = "s" ) -> str:
@@ -322,3 +321,11 @@ def generic_embed( ctx, title: str, color: COLORS ) -> hikari.Embed:
   embed = hikari.Embed( title = title, color = color )
   embed.set_footer( f"Requested by: { ctx.author.username }" )
   return embed
+
+def get_from_list( item, arr: list ):
+  """ Returns the item if found. Else, returns `None`
+  """
+  try:
+    return arr.index( item )
+  except:
+    return None

@@ -188,13 +188,14 @@ async def get_player_submissions( ctx ):
 @lightbulb.option( "game", "Name of the game to find" )
 @lightbulb.command( "who_subbed", "Find out who subbed a certain game. " )
 @lightbulb.implements( lightbulb.SlashCommand )
-async def get_who_subbed( ctx ):
+async def get_who_subbed( ctx: lightbulb.SlashContext ):
   query = ctx.options.game.strip().lower()
   view  = miru.View( timeout = 60 )
   embed = generic_embed( ctx, f"🕹️  Who Submitted?", COLORS.who_subbed )
   
-  filtered_games = filter_sub_list( query, cfg.GAME_LIST, 25 )
-  
+  filtered_games = filter_sub_list( query, cfg.GAME_LIST )
+  too_many_matches = len( filtered_games ) > 25
+
   # break: no matches found
   if len( filtered_games ) == 0:
     await ctx.respond( error_embed( f"No games found with query \"{query}\"... " ) )
@@ -209,21 +210,27 @@ async def get_who_subbed( ctx ):
     
     return
   
+  embed.add_field( "❓  Ambiguous Query...", f"Multiple possible results for \"{ query }\".\n\n {NON_BREAK_SPACE}" )
+
+  # step: too many matches, warn that the game may not be present
+  if too_many_matches:
+    filtered_games = filtered_games[ :25 ] 
+    embed.add_field( f"⚠️  Warning: Too many matches!", f"If the game isn't in the list, close this message and try again with a more precise query. " )
+
+  
   # step: get user to specify game with dropdown
+  embed.add_field( NON_BREAK_SPACE, "⬇️  Please clarify with the selection below. ⬇️" )
   options = convert_to_options( filtered_games )
   view.add_item( WhoSubbedSelect( options = options ) )
   view.add_item( CloseButton() )  
   
-  embed.add_field( "Confirm Game", f"Multiple possible results for \"{ query }\".\nPlease clarify with the below selection. " )
   message = await ctx.respond( embed, components=view )
   
   await view.start( message )
   await view.wait()
   
-  view.clear_items()
-  
   await ctx.delete_last_response()
-
+  
 
 def main():
   cfg.DATABASE = parse_raw_data( retrieve_values() )

@@ -11,6 +11,7 @@ from pprint    import pprint
 from global_variables import SCOPES
 from global_variables import CHASE_VGM_SCOREBOARD_ID
 from global_variables import CHASE_VGM_SCOREBOARD_RANGE
+from utils import dlog
 
 # If modifying these scopes, delete the file token.json.
 
@@ -56,8 +57,11 @@ def retrieve_values():
         if not values:
             print("No data found.")
             return
+    
+        values = [ value for i, value in enumerate( values ) if i != 0 ]
 
-        return values[1:]
+        return values
+
         
     except HttpError as err:
         print(err)

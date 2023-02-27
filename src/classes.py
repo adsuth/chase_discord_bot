@@ -91,6 +91,7 @@ class Submission:
       self.type      = SubmissionType.REGULAR if "(m)" not in raw else SubmissionType.MICRO
       self.submitter = submitter
       self.name      = raw.replace( " (m)", "" )
+      self.key       = self.name.strip().lower()
     
     def __str__( self ):
       return self.name

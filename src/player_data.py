@@ -109,7 +109,7 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
       
       subbed_games += subs[0] + subs[1]
 
-  cfg.GAME_LIST = sorted( subbed_games, key=lambda key: key.name )
+  cfg.GAME_LIST = sorted( subbed_games, key=lambda item: item.key )
   
   
   return output
