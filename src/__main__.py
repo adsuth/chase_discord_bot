@@ -8,12 +8,11 @@ from tabulate         import tabulate
 # My methods
 from player_data      import Player
 
-from global_variables import CHASER_ALIASES, TOKEN
+from global_variables import ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHASER_ALIASES, TOKEN
 from global_variables import SERVER_ID
 from global_variables import NON_BREAK_SPACE
 from global_variables import DEBUG_LOGGING_INCLUDED
 from classes import EMBED_COLORS as COLORS, Alias, AliasType
-
 
 import config as cfg
 from views.components import CloseButton, WhoSubbedSelect
@@ -24,7 +23,7 @@ from retrieve_sheet   import retrieve_values
 from player_data      import parse_raw_data
 
 import utils
-from   utils import debug_embed, error_embed, generic_embed, get_can_afford_micro_string, get_can_afford_regular_string, pad_string, pl
+from   utils import bot_allow_action, debug_embed, error_embed, generic_embed, get_can_afford_micro_string, get_can_afford_regular_string, pad_string, pl
 from   utils import find_player
 from   utils import player_not_found
 from   utils import format_submissions_as_strings
@@ -49,6 +48,10 @@ async def get_player_spiritbomb( ctx ):
   Gets given player's Spiritbomb power. \n
   A "Spiritbomb" uses *all of the player's bonus points*
   """
+
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+  
   query = ctx.options.player.strip().lower()
   player = find_player( query )
     
@@ -77,6 +80,10 @@ async def get_player_spiritbomb( ctx ):
   Gets given player's total spendable points. \n
   This includes Total Points, and the sum of all bonus point categories.
   """
+
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+  
   query = ctx.options.player.strip().lower()
   player = find_player( query )
   
@@ -101,6 +108,8 @@ async def get_player_spiritbomb( ctx ):
   # success: send message
   await ctx.respond( embed )
 
+
+
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Bonus Points    - /bonus
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -109,6 +118,9 @@ async def get_player_spiritbomb( ctx ):
 @lightbulb.command( "bonus", "Retrieves player's bonus point categories from the scoreboard as a table" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_score( ctx ):
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+
   query = ctx.options.player.strip().lower()
   player = find_player( query )
   
@@ -140,6 +152,9 @@ async def get_player_score( ctx ):
 async def get_player_submissions( ctx ):
   """ Retrieves a list of player submissions.
   """
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+  
   query = ctx.options.player.strip().lower()
   player = find_player( query )
   
@@ -189,6 +204,9 @@ async def get_player_submissions( ctx ):
 @lightbulb.command( "who_subbed", "Find out who subbed a certain game. " )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_who_subbed( ctx: lightbulb.SlashContext ):
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+
   query = ctx.options.game.strip().lower()
   view  = miru.View( timeout = 60 )
   embed = generic_embed( ctx, f"🕹️  Who Submitted?", COLORS.who_subbed )
@@ -210,7 +228,7 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
     
     return
   
-  embed.add_field( "❓  Ambiguous Query...", f"Multiple possible results for \"{ query }\".\n\n {NON_BREAK_SPACE}" )
+  embed.add_field( "❓  Ambiguous Query...", f"Multiple possible results for \"{ query }\".\n{NON_BREAK_SPACE}" )
 
   # step: too many matches, warn that the game may not be present
   if too_many_matches:
@@ -229,13 +247,83 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   await view.start( message )
   await view.wait()
   
+  # success: delete vestigial view
   await ctx.delete_last_response()
   
+# # # # # # # # # # # # # # # # # # # # # # # #
+#     ADMIN Refresh   - /refresh_data
+# # # # # # # # # # # # # # # # # # # # # # # #
+@bot.command
+@lightbulb.add_checks( lightbulb.has_roles( ADMIN_ROLE_IDS ) ) # comment out this line for debugging
+@lightbulb.command( "refresh_data", "ADMIN COMMAND: Refresh the player data for this session. " )
+@lightbulb.implements( lightbulb.SlashCommand )
+async def admin_refresh_data( ctx: lightbulb.SlashContext ):
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+  
+  try:
+    refresh_data()
+    await ctx.respond( generic_embed( ctx, "✅  Success! Data has been refreshed. ", COLORS.success ) )
+
+  except:
+    await ctx.respond( error_embed( ctx, "❌  Failure. Data was not refreshed properly... ", COLORS.failure ) )
+ 
+
+
+# # # # # # # # # # # # # # # # # # # # # # # #
+#     Error Handling 
+# # # # # # # # # # # # # # # # # # # # # # # #
+@bot.listen( lightbulb.CommandErrorEvent )
+async def on_error( event: lightbulb.CommandErrorEvent ) -> None:
+  title = "An Error Occurred..."
+  desc  = "Something went wrong... "
+
+  # Keeping this here because I always forget how to do this:
+  # bot_channel = await bot.rest.fetch_channel( BOT_ALLOWED_CHANNELS[0] )
+  # bot_channel_uri = f"https://discord.com/channels/{ BOT_ALLOWED_CHANNELS[0] }"
+
+  dlog( event.exception )
+
+  # step: get the exception type
+  match type( event.exception ):
+    
+    # break: For commands used outside the appropriate channel.
+    case lightbulb.CommandInvocationError:
+      title = "You Cannot Use Commands Here"
+      desc  = f"Go to <#{ BOT_ALLOWED_CHANNELS[0] }> to use commands. "
+
+    # break: For ADMIN commands performed by non-admins
+    case lightbulb.MissingRequiredRole:
+      title = "You Don't Have Permission to Use This Command"
+      desc  = f"This command is exclusive to <@&{ADMIN_ROLE_IDS[0]}>"
+    
+    
+
+  # step: create the embed
+  embed = error_embed( "❌  " + title, desc )
+  embed.set_footer( "Only you can see this. " )
+
+  # success: Send ephemeral message to invoker
+  await event.context.respond (
+    hikari.ResponseType.MESSAGE_CREATE,  
+    embed,
+    flags=hikari.MessageFlag.EPHEMERAL, # ephemeral == only the respondee can see it
+    role_mentions=True
+  )
+
+
+ 
+
+def refresh_data():
+  cfg.GAME_LIST       = []
+  cfg.HANDLED_CHASERS = []
+  cfg.DATABASE  = parse_raw_data( retrieve_values() )
 
 def main():
-  cfg.DATABASE = parse_raw_data( retrieve_values() )
+  refresh_data()
   miru.install( bot )
   bot.run()
+
   
 def test():
   """ Debug method, dont use this in production.

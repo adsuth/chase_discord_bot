@@ -20,12 +20,19 @@ NON_BREAK_SPACE             = "** **"
 NO_OF_SCORE_DATA_COLUMNS    = 20
 MAX_NO_OF_SELECT_OPTIONS    = 25
 
-ADMIN_IDS                   = (
-  102754917298507776, # Quetz
-  # Room for more if Quetz wants to grant admin privileges to other users (chasers maybe?)
-)
+"""Can add permissions if needed (eg, if Chasers should be able to refresh data)"""
+ADMIN_ROLE_IDS = [
+  1079849502313291927,   # test enviro admin
+  520207923763347471,   # Quizmaster - Quetz
+]
+
+BOT_ALLOWED_CHANNELS = [
+  1079817162685956176  # debug
+]
 
 DEBUG_LOGGING_INCLUDED = True
+IN_DEBUG_MODE          = False
+
 CHASER_ALIASES         = duodict({
    Alias( "Rogue", AliasType.CHASER ):        Alias( "marleebrianna", AliasType.PLAYER ),
    Alias( "The Artist", AliasType.CHASER ):   Alias( "DekuTri", AliasType.PLAYER ),

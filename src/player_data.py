@@ -12,7 +12,6 @@ class Player:
   Storage structure for player data.
   """
   def __init__( self, raw, name ):
-    # todo : this is not reflective of final structure
     self.raw   = raw
     self.name  = name
     self.key   = name.lower().strip()
@@ -24,13 +23,11 @@ class Player:
   def update_calc_values( self ):
     self.balance     = self.total_points
     self.submissions = sorted( ( self.regular_submissions + self.micro_submissions ), key=lambda x: x.name )
-    # TODO  - we'll need to update the "cost of submission" change when its added
     
   def initialise_player_data( self ) -> None:
     """
     Initialises player data, assuming it has not done so prior.
     """
-    # TODO  - We may need to redefine our data in the same session (scoreboard updates)
     if self._defined_in_session:
       return
     
@@ -123,6 +120,11 @@ def parse_submissions( raw_subs: list[str], player: str ) -> tuple[Submission, S
   micro_subs      = []
 
   for item in raw_subs:
+
+    # Check for player alias
+    if ( alias := CHASER_ALIASES.get( player ) ) != None:
+      player = f"{alias.name} ({player})"
+
     sub = Submission( item, player )
     
     if sub.type == SubmissionType.MICRO:

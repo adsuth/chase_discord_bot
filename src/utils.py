@@ -5,7 +5,7 @@ import hikari
 import lightbulb
 
 from   classes import EMBED_COLORS as COLORS, Alias, AliasType
-from   global_variables import CHASER_ALIASES, DEBUG_LOGGING_INCLUDED
+from   global_variables import ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHASER_ALIASES, DEBUG_LOGGING_INCLUDED, IN_DEBUG_MODE
 from   classes import SubmissionType
 import config as cfg
 
@@ -110,9 +110,10 @@ def bullet_list_strings( arr ):
 
 
 
-def error_embed( msg ):
-  return hikari.Embed(
-    title = msg,
+def error_embed( title: str, desc: str = None ):
+  return hikari.Embed (
+    title = title,
+    description = desc,
     color = COLORS.error,
   )
 
@@ -329,3 +330,20 @@ def get_from_list( item, arr: list ):
     return arr.index( item )
   except:
     return None
+  
+def bot_allow_action( ctx: lightbulb.SlashContext ) -> bool:
+  """Run a series of checks to determine whether or not a SlashCommand can be performed\n
+  Particular note: bypass with `IN_DEBUG_MODE = True` in global_variables"""
+  if IN_DEBUG_MODE:
+    return True
+  
+  # todo  - allow admins to bypass allow action check
+  # if ctx.author.guild_ in ADMIN_ROLE_IDS
+  
+  if ctx.channel_id not in BOT_ALLOWED_CHANNELS:
+    return False
+
+  if ctx.author.is_bot:
+    return False
+  
+  return True
