@@ -3,8 +3,9 @@ from time import time
 
 import hikari
 import lightbulb
+import miru
 
-from   classes import EMBED_COLORS as COLORS, Alias, AliasType
+from   classes import EMBED_COLORS as COLORS, Alias, AliasType, Submission
 from   global_variables import ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHASER_ALIASES, DEBUG_LOGGING_INCLUDED, IN_DEBUG_MODE
 from   classes import SubmissionType
 import config as cfg
@@ -347,3 +348,30 @@ def bot_allow_action( ctx: lightbulb.SlashContext ) -> bool:
     return False
   
   return True
+
+def filter_sub_list( query: str, arr: list[ Submission ], limit: int = None ) -> list[str]:
+  """ Filter a list of strings by the given query (case insensitive). \n
+  You can also limit the number of results (this defaults to the length of the given list)
+  """
+  output = []
+  query = query.lower().strip()
+  
+  if limit == None:
+    limit = len( arr )
+  
+  for item in arr:
+    formatted_item = item.name.lower().strip()
+    
+    if query in formatted_item:
+      output.append( item )
+
+    if len( output ) == limit:
+      break
+
+  return output
+
+
+def convert_to_options( filtered_list: list[ Submission ] ) -> list[ miru.SelectOption ]:
+  return [ miru.SelectOption( label = item.name, value = item.name.lower().strip() ) for item in filtered_list ]
+
+  

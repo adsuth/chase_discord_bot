@@ -23,7 +23,7 @@ MAX_NO_OF_SELECT_OPTIONS    = 25
 """Can add permissions if needed (eg, if Chasers should be able to refresh data)"""
 ADMIN_ROLE_IDS = [
   1079849502313291927,   # test enviro admin
-  520207923763347471,   # Quizmaster - Quetz
+  # 520207923763347471,    # Quizmaster - Quetz
 ]
 
 BOT_ALLOWED_CHANNELS = [

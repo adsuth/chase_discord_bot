@@ -17,10 +17,6 @@ class CloseButton( miru.Button ):
   def __init__( self ) -> None:
     super().__init__( style = hikari.ButtonStyle.DANGER, label = "Close" )
 
-  async def callback( self, ctx: miru.ViewContext ) -> None:
-    self.view.stop()
-
-
 
 
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -37,5 +33,8 @@ class WhoSubbedSelect( miru.TextSelect ):
     embed = generic_embed( ctx, "🕹️  Who Submitted?", COLORS.who_subbed )
     embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
     
-    await ctx.message.delete()
-    await ctx.message.respond( embed = embed )
+    # await cfg.bot.rest.create_message( embed = embed, channel = ctx.channel_id )
+    await ctx.edit_response( embed = embed )
+    
+    self.view.stop()
+    self.view.clear_items()
