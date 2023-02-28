@@ -33,8 +33,6 @@ class WhoSubbedSelect( miru.TextSelect ):
     embed = generic_embed( ctx, "🕹️  Who Submitted?", COLORS.who_subbed )
     embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
     
-    # await cfg.bot.rest.create_message( embed = embed, channel = ctx.channel_id )
-    await ctx.edit_response( embed = embed )
-    
-    self.view.stop()
-    self.view.clear_items()
+    # await cfg.bot.rest.create_message( embed = embed, channel = c tx.channel_id )
+    await ctx.respond( embed = embed )
+    await ctx.edit_response( embeds = None, components = None )

@@ -46,7 +46,7 @@ CHASER_ALIASES         = duodict({
    Alias( "The Phantom", AliasType.CHASER ):   Alias( "MysteriousMrLeak", AliasType.PLAYER ),
    Alias( "The Sorcerer", AliasType.CHASER ):  Alias( "NamirrhaTheSorcerer", AliasType.PLAYER ),
 
-   Alias( "Retro", AliasType.CHASER ):         Alias( "retronika", AliasType.PLAYER ),
+  #  Alias( "Retro", AliasType.CHASER ):         Alias( "retronika", AliasType.PLAYER ),
    Alias( "The Composer", AliasType.CHASER ):  Alias( "JNuts24", AliasType.PLAYER ),
    
   #  Alias( "The Boss", AliasType.CHASER ):      Alias( "???", AliasType.PLAYER ), # TODO: Determine proper username

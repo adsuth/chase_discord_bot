@@ -129,13 +129,21 @@ def dlog( *args ):
     print( "\033[93m", *args, f"\033[0m" )
 
 def get_chaser_alias_key( query: str ) -> bool:
-  alias = CHASER_ALIASES.get( query )
+  alias = CHASER_ALIASES.find( query )
   
   if alias == None:
     return None
   
   if alias.type == AliasType.PLAYER:
-    return CHASER_ALIASES.get( query ).key
+    key = CHASER_ALIASES.get( query )
+
+    alias_type = "PLAYER" if key.type == AliasType.PLAYER else "CHASER"
+    dlog( f"Checking Again >> Alias Name: { key.name }\nAlias Type: { alias_type }" )
+
+    return key.key
+
+  alias_type = "PLAYER" if alias.type == AliasType.PLAYER else "CHASER"
+  dlog( f"Right first try >> Alias Name: { alias.name }\nAlias Type: { alias_type }" )
 
   return alias.key
 

@@ -168,7 +168,7 @@ async def get_player_submissions( ctx ):
   title_string = "%s has submitted %d %s" % ( player.name, no_of_submissions, pl( "Game", no_of_submissions ) )
   
   # step: create embed
-  embed = hikari.Embed( title = f" { player.name }'s Submissions", color = COLORS.subs )
+  embed = hikari.Embed( title = f"🕹️  { player.name }'s Submissions", color = COLORS.subs )
   embed.add_field(
     title_string,
     desc_string
@@ -225,12 +225,12 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   view.add_item( WhoSubbedSelect( options = convert_to_options( filtered_games ) ) )
   view.add_item( CloseButton() )  
   
-  message = await ctx.respond( embed, components = view )
+  message = await ctx.respond( embed, components = view, flags = hikari.MessageFlag.EPHEMERAL )
   
   await view.start( message )
   await view.wait()
   
   # success: delete vestigial view
-  view.clear_items()
+  # view.clear_items()
   
 
