@@ -36,15 +36,16 @@ class Player:
     data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
 
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
-    self.AVP                = score_to_int( data[ 13 ] ) # Additional Voting Power
     self.sub_points         = score_to_int( data[ 14 ] ) # Subscriber Points
     self.boost_points       = score_to_int( data[ 15 ] ) # Server Boost Points
     self.comp_points        = score_to_int( data[ 16 ] ) # Competition Points
     self.crown_points       = score_to_int( data[ 17 ] ) # Gold Crown Points
     self.bonus_points       = score_to_int( data[ 18 ] ) # Generic Bonus Points
 
+    self.AVP                = score_to_int( data[ 13 ] ) # Additional Voting Power
+    self.AVP += 10
+
     self.total_bonus_points = sum( (
-      self.AVP,
       self.sub_points,
       self.boost_points,
       self.comp_points,
@@ -60,11 +61,10 @@ class Player:
   
   def get_bonus_dict( self ) -> dict[ str: str ]:
     return {
-      "Additional Voting Power": self.AVP,
       "Subscriber Points":       self.sub_points,
       "Server Boost Points":     self.boost_points,
       "Competition Points":      self.comp_points,
-      "Gold Crown Points":     self.crown_points,
+      "Gold Crown Points":       self.crown_points,
       "Bonus Points":            self.bonus_points,
     }
   
@@ -72,15 +72,12 @@ class Player:
     return self.get_bonus_dict().items()
   
   def calc_cost_of_submision( self ):
-    no_of_subs = len( self.regular_submissions )
-    
-    if no_of_subs == 0:
-      return 100
+    no_of_subs = len( self.regular_submissions ) + 1
         
     if no_of_subs < 4:
       return no_of_subs * 100
     
-    if no_of_subs == 4:
+    if no_of_subs == 5:
       self.will_earn_avp_with_sub = True
     
     return 500   

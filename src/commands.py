@@ -24,7 +24,7 @@ from views.components import CloseButton, WhoSubbedSelect
 #     SpiritBomb  -  /spiritbomb
 # # # # # # # # # # # # # # # # # # # # # # # #
 @cfg.bot.command
-@lightbulb.option( "player", "Player's Twitch username" )
+@lightbulb.option( "player", "Player's Twitch username", default = "" )
 @lightbulb.command( "spiritbomb", "Reveals a player's :spiritbomb: power (total bonus points)" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_spiritbomb( ctx ):
@@ -56,7 +56,7 @@ async def get_player_spiritbomb( ctx ):
 #     Balance - /balance
 # # # # # # # # # # # # # # # # # # # # # # # #
 @cfg.bot.command
-@lightbulb.option( "player", "Player's Twitch username" )
+@lightbulb.option( "player", "Player's Twitch username", default = "" )
 @lightbulb.command( "balance", "Reveals a player's total spendable points" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_spiritbomb( ctx ):
@@ -81,7 +81,7 @@ async def get_player_spiritbomb( ctx ):
   point_word_string = pl( "Point", player.balance )
   embed = hikari.Embed( title = f"💰 Total Point Balance", color = COLORS.balance )
   
-  embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", NON_BREAK_SPACE )
+  embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", f"They may spend up to `  {player.AVP} Points ` per week" )
   embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
   embed.add_field( f"Next Regular Submission will cost ` {cost_of_sub} Points `. ", get_can_afford_regular_string( player, cost_of_sub ) )
   embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
@@ -98,7 +98,7 @@ async def get_player_spiritbomb( ctx ):
 #     Bonus Points    - /bonus
 # # # # # # # # # # # # # # # # # # # # # # # #
 @cfg.bot.command
-@lightbulb.option( "player", "Player's Twitch username" )
+@lightbulb.option( "player", "Player's Twitch username", default = "" )
 @lightbulb.command( "bonus", "Retrieves player's bonus point categories from the scoreboard as a table" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_score( ctx ):
@@ -130,7 +130,7 @@ async def get_player_score( ctx ):
 #     Submissions   - /subs 
 # # # # # # # # # # # # # # # # # # # # # # # #
 @cfg.bot.command
-@lightbulb.option( "player", "Player's Twitch username" )
+@lightbulb.option( "player", "Player's Twitch username", default = "" )
 @lightbulb.command( "subs", "Retrieves a list of the player's game submissions" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_submissions( ctx ):
