@@ -11,6 +11,7 @@ class EMBED_COLORS:
   who_subbed  = 0x2eff43
   success     = 0x2eff43
   spiritbomb  = 0x62efff
+  register    = 0x62efff
   cyan        = 0x62efff
 
 
@@ -80,8 +81,13 @@ class duodict:
     Will return `default` if not found (defaults to `None`)
     """
     key    = key.lower().strip()
-    my_key = self.data.get( key, default ).key
-    return self.data.get( my_key )
+    
+    my_alias = self.data.get( key, default )
+
+    if my_alias == None:
+      return None
+
+    return self.data.get( my_alias.key )
 
     
 class Submission:

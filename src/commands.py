@@ -7,7 +7,7 @@ import config as cfg
 import utils
 from classes import EMBED_COLORS as COLORS
 from classes import Alias, AliasType
-from global_variables import (ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS,
+from global_variables import (ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHANNELS,
                               CHASER_ALIASES, DEBUG_LOGGING_INCLUDED,
                               NON_BREAK_SPACE, SERVER_ID, TOKEN)
 # My methods
@@ -234,3 +234,57 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   # view.clear_items()
   
 
+
+# # # # # # # # # # # # # # # # # # # # # # # #
+#     Register   - /register
+# # # # # # # # # # # # # # # # # # # # # # # #
+@cfg.bot.command
+@lightbulb.option( "username", "The name you want to register as" )
+@lightbulb.command( "register", "Request to have Quetz assign your Discord Account to the Scoreboard" )
+@lightbulb.implements( lightbulb.SlashCommand )
+async def register_discord_to_scoreboard( ctx: lightbulb.SlashContext ):
+  if not bot_allow_action( ctx ):
+    raise lightbulb.CommandErrorEvent
+  
+  query          = ctx.options.username.strip().lower()
+  player: Player = find_player( query )
+  
+  # break: player not found
+  if player_not_found( player ):
+    await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ), flags = hikari.MessageFlag.EPHEMERAL )
+    return
+
+  # todo  - just add the discord ID when we get the player data instead
+  player.initialise_player_data()
+  player_already_registered = player.is_registered()
+
+  # break: name already registered
+  if player_already_registered:
+    registrar = await cfg.bot.rest.fetch_user( player.discord_id )
+    await ctx.respond( error_embed( f"{player.name} has already been registered to { registrar.name }... " ) )
+    return
+  
+  registrar_details = [
+    [ "Name",   ctx.author.username ],
+    [ "ID",     ctx.author.id ],
+    [ "Player", player.name ]
+  ]
+
+  # step: create embed to send to the register channel
+  embed = generic_embed( ctx, f"📋  Register Request", COLORS.register )
+  embed.add_field(
+    "Registrar Details",
+    "%s\n```%s```" % ( "<@" + str( ctx.author.id ) + ">", tabulate( registrar_details, tablefmt = "plain" ) )
+  )
+
+  # embed.add_field( f"{ ctx.author.username } Wants to Register", f"<@{ ctx.author.id }> is looking to register as **{ player.name }**" )
+  # embed.add_field( "Their ID is ", f"`{ ctx.author.id }`" )
+
+  # step: send message to the register channel
+  await cfg.bot.rest.create_message (
+    embed = embed,
+    channel = CHANNELS.get( "test_register" ) 
+  )
+
+  # todo  - send poster an ephemeral message of request confirmation
+  # todo  - add new event for the register channel that will send confirmation DMs to users when quetz reacts to message

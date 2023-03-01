@@ -30,8 +30,13 @@ BOT_ALLOWED_CHANNELS = [
   1079817162685956176  # debug
 ]
 
-DEBUG_LOGGING_INCLUDED = True
-IN_DEBUG_MODE          = False
+CHANNELS = {
+  "test_register": 1080278638286622791
+}
+
+DEBUG_LOGGING_INCLUDED    = True
+IN_DEBUG_MODE             = False
+ERROR_HANDLING_ENABLED    = False
 
 CHASER_ALIASES         = duodict({
    Alias( "Rogue", AliasType.CHASER ):        Alias( "marleebrianna", AliasType.PLAYER ),
@@ -46,7 +51,7 @@ CHASER_ALIASES         = duodict({
    Alias( "The Phantom", AliasType.CHASER ):   Alias( "MysteriousMrLeak", AliasType.PLAYER ),
    Alias( "The Sorcerer", AliasType.CHASER ):  Alias( "NamirrhaTheSorcerer", AliasType.PLAYER ),
 
-  #  Alias( "Retro", AliasType.CHASER ):         Alias( "retronika", AliasType.PLAYER ),
+  #  Alias( "Retro", AliasType.CHASER ):         Alias( "retronika", AliasType.PLAYER ), # removed as her player 
    Alias( "The Composer", AliasType.CHASER ):  Alias( "JNuts24", AliasType.PLAYER ),
    
   #  Alias( "The Boss", AliasType.CHASER ):      Alias( "???", AliasType.PLAYER ), # TODO: Determine proper username

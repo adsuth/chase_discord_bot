@@ -32,8 +32,11 @@ class Player:
       return
     
     self._defined_in_session = True
+
     data = self.raw
     data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
+
+    self.discord_id         = None # todo  - use actual column when added
 
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
     self.sub_points         = score_to_int( data[ 14 ] ) # Subscriber Points
@@ -58,6 +61,10 @@ class Player:
 
     if check_for_chaser_alias( self.key ):
       handle_chaser_alias( self.key )
+
+  
+  def is_registered( self ):
+    return self.discord_id != None
   
   def get_bonus_dict( self ) -> dict[ str: str ]:
     return {
