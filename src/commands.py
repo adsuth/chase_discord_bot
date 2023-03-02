@@ -286,5 +286,10 @@ async def register_discord_to_scoreboard( ctx: lightbulb.SlashContext ):
     channel = CHANNELS.get( "test_register" ) 
   )
 
+  embed = generic_embed( ctx, "📋  Request Sent", COLORS.success )
+  embed.add_field( NON_BREAK_SPACE, f"You have successfully requested to register as **{player.name}**" )
+
+  await ctx.respond( embed = embed, flags = hikari.MessageFlag.EPHEMERAL )
+
   # todo  - send poster an ephemeral message of request confirmation
   # todo  - add new event for the register channel that will send confirmation DMs to users when quetz reacts to message

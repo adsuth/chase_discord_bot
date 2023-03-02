@@ -327,9 +327,10 @@ def get_can_afford_micro_string( player: object ) -> str:
   return f"✅ {player.name} can afford a **full** micro submission! "
 
 
-def generic_embed( ctx, title: str, color: COLORS ) -> hikari.Embed:
+def generic_embed( ctx: lightbulb.Context, title: str, color: COLORS ) -> hikari.Embed:
   embed = hikari.Embed( title = title, color = color )
-  embed.set_footer( f"Requested by: { ctx.author.username }" )
+  if ctx != None:
+    embed.set_footer( f"Requested by: { ctx.author.username }" )
   return embed
 
 def get_from_list( item, arr: list ):
@@ -383,3 +384,42 @@ def convert_to_options( filtered_list: list[ Submission ] ) -> list[ miru.Select
   return [ miru.SelectOption( label = item.name, value = item.name.lower().strip() ) for item in filtered_list ]
 
   
+def parse_request_message( request: str ) -> dict:
+  """
+  Assumes request.split(\\n) would return: \n
+  [ \n
+    '<@253943942993674241>',\n
+    '```Name    ADSÜ', \n
+    'ID      253943942993674241', \n
+    'Player  adsumlaut```' \n
+  ]
+  """
+
+  message = request.split( "\n" )
+
+  index_name   = message[1].rfind( "Name" ) + len( "Name" )
+  index_player = message[3].rfind( "Player" ) + len( "Player" )
+
+  id      = message[0][ 2 : -1 ]
+  user    = message[1][ index_name: ].strip()
+  player  = message[3][ index_player: ].replace( "`", "" ).strip()
+  key     = player.lower().strip()
+
+  return {
+    "id":   int( id ),
+    "user"  : user,
+    "player": player,
+    "key"   : key
+  }
+
+
+def find_player_by_id( id: int ) -> object:
+  """Finds player from the DATABASE based on their Discord ID"""
+
+  for key in cfg.DATABASE:
+    player = cfg.DATABASE[ key ]
+    
+    if id == player.discord_id:
+      return player
+  
+  return None

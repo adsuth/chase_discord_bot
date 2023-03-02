@@ -11,10 +11,12 @@ class Player:
   """
   Storage structure for player data.
   """
-  def __init__( self, raw, name ):
-    self.raw   = raw
-    self.name  = name
-    self.key   = name.lower().strip()
+  def __init__( self, raw, name, discord_id ):
+    self.raw        = raw
+    self.name       = name
+    self.key        = name.lower().strip()
+    self.discord_id = discord_id
+    
     self._defined_in_session = False
     
     self.regular_submissions = []
@@ -99,8 +101,10 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
   
   for row in raw_data:
     key, name = row[0].lower(), row[0]
+
+    discord_id = None # todo  - change this when Quetz adds new column
   
-    output[ key ] = Player( row, name )
+    output[ key ] = Player( row, name, discord_id)
     
     # add subbed games if there are any
     if len( row ) > 19:
