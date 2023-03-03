@@ -4,7 +4,7 @@ import miru
 
 from classes import EMBED_COLORS as COLORS
 import config as cfg
-from global_variables import ADMIN_ROLE_IDS, SERVER_ID, TOKEN
+from global_variables import ADMIN_ROLES, SERVER_ID, TOKEN
 from player_data import parse_raw_data
 from retrieve_sheet import get_legacy_games, retrieve_values
 from utils import bot_allow_action, error_embed, generic_embed
@@ -23,7 +23,7 @@ import events
 #     ADMIN Refresh   - /refresh_data
 # # # # # # # # # # # # # # # # # # # # # # # #
 @cfg.bot.command
-@lightbulb.add_checks( lightbulb.has_roles( ADMIN_ROLE_IDS[ 0 ] ) ) # comment out this line for debugging
+@lightbulb.add_checks( lightbulb.has_roles( ADMIN_ROLES[0] ) )
 @lightbulb.command( "refresh_data", "ADMIN COMMAND: Refresh the player data for this session. " )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def admin_refresh_data( ctx: lightbulb.SlashContext ):

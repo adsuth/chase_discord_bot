@@ -7,7 +7,7 @@ import config as cfg
 import utils
 from classes import EMBED_COLORS as COLORS, SubmissionType
 from classes import Alias, AliasType
-from global_variables import (ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHANNELS,
+from global_variables import (CHANNELS,
                               CHASER_ALIASES, DEBUG_LOGGING_INCLUDED,
                               NON_BREAK_SPACE, SERVER_ID, TOKEN)
 # My methods
@@ -93,7 +93,7 @@ async def get_player_spiritbomb( ctx ):
   point_word_string = pl( "Point", player.balance )
   embed = hikari.Embed( title = f"💰 Total Point Balance", color = COLORS.balance )
   
-  embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", f"They may spend up to `  {player.AVP} Points ` per week" )
+  embed.add_field( f"{ player.name } has ` {player.balance} {point_word_string} ` to spend. ", f"They may spend up to `  {player.AVP} Points  ` per week" )
   embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
   embed.add_field( f"Next Regular Submission will cost ` {cost_of_sub} Points `. ", get_can_afford_regular_string( player, cost_of_sub ) )
   embed.add_field( NON_BREAK_SPACE, NON_BREAK_SPACE )
