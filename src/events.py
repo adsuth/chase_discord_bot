@@ -1,12 +1,9 @@
-from pprint import pprint
-
 import hikari
 import lightbulb
 from classes import EMBED_COLORS as COLORS
 
 import config as cfg
-from global_variables import (ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHANNELS, ERROR_HANDLING_ENABLED, IN_DEBUG_MODE, NON_BREAK_SPACE )
-# My methods
+from global_variables import (ADMIN_ROLES, CHANNELS, ERROR_HANDLING_ENABLED, IN_DEBUG_MODE, NON_BREAK_SPACE )
 from utils import ( dlog, error_embed, find_player_by_id, generic_embed, parse_request_message )
 
 
@@ -14,7 +11,6 @@ from utils import ( dlog, error_embed, find_player_by_id, generic_embed, parse_r
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Error Handling 
 # # # # # # # # # # # # # # # # # # # # # # # #
-
 if ERROR_HANDLING_ENABLED:
   @cfg.bot.listen( lightbulb.CommandErrorEvent )
   async def on_error( event: lightbulb.CommandErrorEvent ) -> None:
@@ -22,25 +18,20 @@ if ERROR_HANDLING_ENABLED:
     title = "An Error Occurred..."
     desc  = "Something went wrong... "
 
-    # Keeping this here because I always forget how to do this:
-    # bot_channel = await bot.rest.fetch_channel( BOT_ALLOWED_CHANNELS[0] )
-    # bot_channel_uri = f"https://discord.com/channels/{ BOT_ALLOWED_CHANNELS[0] }"
-
-    dlog( event.exception )
-    dlog( event.exc_info )
-
     # step: get the exception type
     match type( event.exception ):
         
       # break: For commands used outside the appropriate channel.
       case lightbulb.CommandInvocationError:
+        bot_channel = CHANNELS.get( "bot_channel" )
         title = "You Cannot Use Commands Here"
-        desc  = f"Go to <#{ BOT_ALLOWED_CHANNELS[0] }> to use commands. "
+        desc  = f"Go to <#{bot_channel}> to use commands. "
 
       # break: For ADMIN commands performed by non-admins
       case lightbulb.MissingRequiredRole:
+        admin_roles = [ f"<@&{role}>" for role in ADMIN_ROLES ]
         title = "You Don't Have Permission to Use This Command"
-        desc  = f"This command is exclusive to <@&{ADMIN_ROLE_IDS[0]}>"
+        desc  = f"This command is exclusive to {admin_roles}>"
 
 
     # step: create the embed
@@ -63,12 +54,10 @@ if ERROR_HANDLING_ENABLED:
 async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
   """
   Upon using the /register command, a message is sent to the hidden "register" channel (that only Quetz should have access to) \n
-  
   """
 
   # break: reaction not in the correct channel
-  # todo  - change this channel to appropriate chase channel
-  if event.channel_id != CHANNELS[ "test_register" ]:
+  if event.channel_id != CHANNELS[ "register_channel" ]:
     return
   
   original_message = await cfg.bot.rest.fetch_message( event.channel_id, event.message_id )
@@ -94,6 +83,5 @@ async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
     embed = embed
   )
 
-  # delete the original message todo  - is this wanted?
   await original_message.delete()
 

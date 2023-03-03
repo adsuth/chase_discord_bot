@@ -9,7 +9,6 @@ from player_data import parse_raw_data
 from retrieve_sheet import get_legacy_games, retrieve_values
 from utils import bot_allow_action, error_embed, generic_embed
 
-# todo  - Which intents specifically will we need?
 cfg.bot = lightbulb.BotApp (
   token                   = TOKEN,
   intents                 = hikari.Intents.ALL,

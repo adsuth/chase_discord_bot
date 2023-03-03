@@ -38,8 +38,6 @@ class Player:
     data = self.raw
     data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
 
-    # self.discord_id         = None # todo  - use actual column when added
-
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
     self.sub_points         = score_to_int( data[ 14 ] ) # Subscriber Points
     self.boost_points       = score_to_int( data[ 15 ] ) # Server Boost Points
@@ -106,11 +104,6 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
   
     output[ key ] = Player( row, name, discord_id)
 
-
-    if key == "adsumlaut":
-      dlog( "added adsumlaut's discord id" )
-      output[ key ].discord_id = 253943942993674241
-    
     # add subbed games if there are any
     if len( row ) > 19:
       subs = parse_submissions( row[20:], name )

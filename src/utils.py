@@ -6,7 +6,7 @@ import lightbulb
 import miru
 
 from   classes import EMBED_COLORS as COLORS, Alias, AliasType, Submission
-from   global_variables import ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHASER_ALIASES, DEBUG_LOGGING_INCLUDED, IN_DEBUG_MODE
+from   global_variables import CHANNELS, CHASER_ALIASES, DEBUG_LOGGING_INCLUDED, IN_DEBUG_MODE
 from   classes import SubmissionType
 import config as cfg
 
@@ -293,8 +293,6 @@ def handle_chaser_alias( alias_key: str ) -> None:
   chaser_data.regular_submissions += player_data.regular_submissions
   chaser_data.micro_submissions   += player_data.micro_submissions
   
-  # TODO: - We'll need to reassign the Submitters of each submission later
-  
   # recalc stuff like the balance and subs
   chaser_data.update_calc_values()
   
@@ -351,10 +349,7 @@ def bot_allow_action( ctx: lightbulb.SlashContext ) -> bool:
   if IN_DEBUG_MODE:
     return True
   
-  # todo  - allow admins to bypass allow action check
-  # if ctx.author.guild_ in ADMIN_ROLE_IDS
-  
-  if ctx.channel_id not in BOT_ALLOWED_CHANNELS:
+  if ctx.channel_id != CHANNELS[ "bot_channel" ]:
     return False
 
   if ctx.author.is_bot:
@@ -392,10 +387,10 @@ def parse_request_message( request: str ) -> dict:
   """
   Assumes request.split(\\n) would return: \n
   [ \n
-    '<@253943942993674241>',\n
-    '```Name    ADSÜ', \n
-    'ID      253943942993674241', \n
-    'Player  adsumlaut```' \n
+    '<@253..............41>',\n
+    '```Name    XXXXXXX', \n
+    'ID      253..............41', \n
+    'Player  xxxxxxxx```' \n
   ]
   """
 

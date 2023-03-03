@@ -114,6 +114,8 @@ async def get_player_spiritbomb( ctx ):
 @lightbulb.command( "bonus", "Retrieves player's bonus point categories from the scoreboard as a table" )
 @lightbulb.implements( lightbulb.SlashCommand )
 async def get_player_score( ctx ):
+  """ Retrieves a player's bonus points as a table
+  """
   if not bot_allow_action( ctx ):
     raise lightbulb.CommandErrorEvent
 
@@ -258,10 +260,8 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   await view.start( message )
   await view.wait()
   
-  # success: delete vestigial view
-  # view.clear_items()
+  # success: 
   
-
 
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Register   - /register
@@ -288,7 +288,6 @@ async def register_discord_to_scoreboard( ctx: lightbulb.SlashContext ):
     await ctx.respond( error_embed( f"Unable to find player: \"{query}\"" ), flags = hikari.MessageFlag.EPHEMERAL )
     return
 
-  # todo  - just add the discord ID when we get the player data instead
   player.initialise_player_data()
   player_already_registered = player.is_registered()
 
@@ -317,7 +316,7 @@ async def register_discord_to_scoreboard( ctx: lightbulb.SlashContext ):
   # step: send message to the register channel
   await cfg.bot.rest.create_message (
     embed = embed,
-    channel = CHANNELS.get( "test_register" ) 
+    channel = CHANNELS.get( "register_channel" ) 
   )
 
   embed = generic_embed( ctx, "📋  Request Sent", COLORS.success )

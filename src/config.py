@@ -8,6 +8,6 @@
 import hikari
 
 bot : hikari.GatewayBot = None
-DATABASE                = {}
-HANDLED_CHASERS         = []
-GAME_LIST               = []
+DATABASE                = {}  # str -> Player
+HANDLED_CHASERS         = []  # str
+GAME_LIST               = []  # Submission

@@ -6,7 +6,6 @@ from googleapiclient.errors import HttpError
 
 import os
 from functools import cache
-from pprint  import pprint
 from classes import Submission, SubmissionType
 
 from global_variables import PATH_TO_LEGACY_GAME_LIST, SCOPES
@@ -16,15 +15,11 @@ from utils import dlog
 
 import config as cfg
 
-# If modifying these scopes, delete the file token.json.
-
-
 
 @cache
 def retrieve_values():
   """
-  Shows basic usage of the Sheets API.
-  Prints values from a sample spreadsheet.
+  Gets the values from CHASE VGM sheet
   """
   creds = None
   # The file token.json stores the user"s access and refresh tokens, and is

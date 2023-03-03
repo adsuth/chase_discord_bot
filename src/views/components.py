@@ -38,5 +38,3 @@ class WhoSubbedSelect( miru.TextSelect ):
       embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
     
     await ctx.respond( embed = embed )
-
-    # todo  figure out how to delete the ephemeral

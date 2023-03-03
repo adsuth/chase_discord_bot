@@ -1,7 +1,6 @@
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Data Classes
 # # # # # # # # # # # # # # # # # # # # # # # #
-
 class EMBED_COLORS:
   error       = 0xff4063
   failure     = 0xff4063

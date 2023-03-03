@@ -21,22 +21,18 @@ NO_OF_SCORE_DATA_COLUMNS    = 20
 MAX_NO_OF_SELECT_OPTIONS    = 25
 
 """Can add permissions if needed (eg, if Chasers should be able to refresh data)"""
-ADMIN_ROLE_IDS = [
-  1079849502313291927,   # test enviro admin
-  # 520207923763347471,    # Quizmaster - Quetz
-]
-
-BOT_ALLOWED_CHANNELS = [
-  1079817162685956176  # debug
+ADMIN_ROLES = [
+  520207923763347471,    # Quizmaster - Quetz
 ]
 
 CHANNELS = {
-  "test_register": 1080278638286622791
+  "regsiter_channel": 1080278638286622791,  # This is where register requests are sent (should be hidden, accessible only to Quetz)
+  "bot_channel":      1079817162685956176   # This is where commands can be used
 }
 
-DEBUG_LOGGING_INCLUDED    = True
+DEBUG_LOGGING_INCLUDED    = False
 IN_DEBUG_MODE             = False
-ERROR_HANDLING_ENABLED    = False
+ERROR_HANDLING_ENABLED    = True
 
 PATH_TO_LEGACY_GAME_LIST  = "./src/public/legacy_games.txt"
 
@@ -53,14 +49,8 @@ CHASER_ALIASES         = duodict({
    Alias( "The Phantom", AliasType.CHASER ):   Alias( "MysteriousMrLeak", AliasType.PLAYER ),
    Alias( "The Sorcerer", AliasType.CHASER ):  Alias( "NamirrhaTheSorcerer", AliasType.PLAYER ),
 
-  #  Alias( "Retro", AliasType.CHASER ):         Alias( "retronika", AliasType.PLAYER ), # removed as her player 
    Alias( "The Composer", AliasType.CHASER ):  Alias( "JNuts24", AliasType.PLAYER ),
-   
-  #  Alias( "The Boss", AliasType.CHASER ):      Alias( "???", AliasType.PLAYER ), # TODO: Determine proper username
-  #  Alias( "Maestro", AliasType.CHASER ):       Alias( "???", AliasType.PLAYER ), # TODO: Determine proper username
-  #  Alias( "Quetz", AliasType.CHASER ): Alias( "TheChaseVGM", AliasType.PLAYER ), # TODO: Determine if Quetz has row entry...
-  
 })
 
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+SCOPES = [ "https://www.googleapis.com/auth/spreadsheets.readonly" ]
 
