@@ -22,6 +22,7 @@ class EMBED_COLORS:
 class SubmissionType:
   MICRO   = 0
   REGULAR = 1
+  LEGACY  = 2
 
 class AliasType:
   PLAYER = 0

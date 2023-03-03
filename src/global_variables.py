@@ -38,6 +38,8 @@ DEBUG_LOGGING_INCLUDED    = True
 IN_DEBUG_MODE             = False
 ERROR_HANDLING_ENABLED    = False
 
+PATH_TO_LEGACY_GAME_LIST  = "./src/public/legacy_games.txt"
+
 CHASER_ALIASES         = duodict({
    Alias( "Rogue", AliasType.CHASER ):        Alias( "marleebrianna", AliasType.PLAYER ),
    Alias( "The Artist", AliasType.CHASER ):   Alias( "DekuTri", AliasType.PLAYER ),

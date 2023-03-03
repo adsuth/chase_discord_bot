@@ -147,11 +147,15 @@ def get_chaser_alias_key( query: str ) -> bool:
 
   return alias.key
 
-def find_player( query: str ):
+def find_player( ctx: lightbulb.Context, query: str ):
   """ Finds player in the DATABASE dict. \n
   When found, initialises player's data (if not done prior) \n
   If player is unfound, will return None
   """
+  if ctx != None and len( query ) == 0:
+    player = find_player_by_id( ctx.author.id )
+    return player
+
   chaser_alias_key = get_chaser_alias_key( query )
   
   if chaser_alias_key != None:
@@ -420,6 +424,7 @@ def find_player_by_id( id: int ) -> object:
     player = cfg.DATABASE[ key ]
     
     if id == player.discord_id:
+      player.initialise_player_data()
       return player
   
   return None

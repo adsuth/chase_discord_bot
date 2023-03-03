@@ -31,7 +31,7 @@ if ERROR_HANDLING_ENABLED:
 
     # step: get the exception type
     match type( event.exception ):
-      
+        
       # break: For commands used outside the appropriate channel.
       case lightbulb.CommandInvocationError:
         title = "You Cannot Use Commands Here"
@@ -41,6 +41,7 @@ if ERROR_HANDLING_ENABLED:
       case lightbulb.MissingRequiredRole:
         title = "You Don't Have Permission to Use This Command"
         desc  = f"This command is exclusive to <@&{ADMIN_ROLE_IDS[0]}>"
+
 
     # step: create the embed
     embed = error_embed( "❌  " + title, desc )
@@ -60,6 +61,10 @@ if ERROR_HANDLING_ENABLED:
 
 @cfg.bot.listen( hikari.events.ReactionEvent )
 async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
+  """
+  Upon using the /register command, a message is sent to the hidden "register" channel (that only Quetz should have access to) \n
+  
+  """
 
   # break: reaction not in the correct channel
   # todo  - change this channel to appropriate chase channel

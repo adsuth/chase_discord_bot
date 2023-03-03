@@ -38,7 +38,7 @@ class Player:
     data = self.raw
     data += [""] * ( NO_OF_SCORE_DATA_COLUMNS - len( data ) )
 
-    self.discord_id         = None # todo  - use actual column when added
+    # self.discord_id         = None # todo  - use actual column when added
 
     self.total_points       = score_to_int( data[ 12 ] ) # Total Points (excl. Bonus Points)
     self.sub_points         = score_to_int( data[ 14 ] ) # Subscriber Points
@@ -97,7 +97,7 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
   Parses raw player data, returning a dict of Player objects
   """
   output       = {}
-  subbed_games = []
+  subbed_games = [ *cfg.GAME_LIST ]
   
   for row in raw_data:
     key, name = row[0].lower(), row[0]
@@ -105,6 +105,11 @@ def parse_raw_data( raw_data: str ) -> dict[Player]:
     discord_id = None # todo  - change this when Quetz adds new column
   
     output[ key ] = Player( row, name, discord_id)
+
+
+    if key == "adsumlaut":
+      dlog( "added adsumlaut's discord id" )
+      output[ key ].discord_id = 253943942993674241
     
     # add subbed games if there are any
     if len( row ) > 19:

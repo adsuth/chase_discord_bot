@@ -6,7 +6,7 @@ from classes import EMBED_COLORS as COLORS
 import config as cfg
 from global_variables import ADMIN_ROLE_IDS, SERVER_ID, TOKEN
 from player_data import parse_raw_data
-from retrieve_sheet import retrieve_values
+from retrieve_sheet import get_legacy_games, retrieve_values
 from utils import bot_allow_action, error_embed, generic_embed
 
 # todo  - Which intents specifically will we need?
@@ -29,7 +29,7 @@ import events
 @lightbulb.implements( lightbulb.SlashCommand )
 async def admin_refresh_data( ctx: lightbulb.SlashContext ):
   if not bot_allow_action( ctx ):
-    raise lightbulb.CommandErrorEvent
+    raise lightbulb.MissingRequiredRole
   
   try:
     refresh_data()
@@ -40,7 +40,7 @@ async def admin_refresh_data( ctx: lightbulb.SlashContext ):
  
 
 def refresh_data():
-  cfg.GAME_LIST       = []
+  cfg.GAME_LIST       = get_legacy_games()
   cfg.HANDLED_CHASERS = []
   cfg.DATABASE        = parse_raw_data( retrieve_values() )
 

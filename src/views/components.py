@@ -7,7 +7,7 @@ from utils import dlog, error_embed, generic_embed, get_from_list
 sys.path.append( "../" )
 
 from global_variables import NON_BREAK_SPACE
-from classes          import EMBED_COLORS as COLORS
+from classes          import EMBED_COLORS as COLORS, SubmissionType
 import config as cfg
 
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -31,8 +31,12 @@ class WhoSubbedSelect( miru.TextSelect ):
     sub   = cfg.GAME_LIST[ index ]  
     
     embed = generic_embed( ctx, "🕹️  Who Submitted?", COLORS.who_subbed )
-    embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
+
+    if sub.type == SubmissionType.LEGACY:
+      embed.add_field( f"{ sub.name }", f"This was a legacy submission" )
+    else:
+      embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
     
-    # await cfg.bot.rest.create_message( embed = embed, channel = c tx.channel_id )
     await ctx.respond( embed = embed )
-    await ctx.edit_response( embeds = None, components = None )
+
+    # todo  figure out how to delete the ephemeral

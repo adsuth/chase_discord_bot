@@ -5,7 +5,7 @@ from tabulate import tabulate
 
 import config as cfg
 import utils
-from classes import EMBED_COLORS as COLORS
+from classes import EMBED_COLORS as COLORS, SubmissionType
 from classes import Alias, AliasType
 from global_variables import (ADMIN_ROLE_IDS, BOT_ALLOWED_CHANNELS, CHANNELS,
                               CHASER_ALIASES, DEBUG_LOGGING_INCLUDED,
@@ -37,7 +37,13 @@ async def get_player_spiritbomb( ctx ):
     raise lightbulb.CommandErrorEvent
   
   query = ctx.options.player.strip().lower()
-  player = find_player( query )
+  player = find_player( ctx, query )
+
+  # break: player id not found
+  if len( query ) == 0 and player_not_found( player ):
+    embed = error_embed( f"Unable to find your ID" )
+    embed.add_field( "You aren't registered yet...", "Use `/register` to request to have your ID tied to your Scoreboard entry.\nIf you have registered, please wait for Quetz to add you to the database." )
+    return
     
   # break: player not found
   if player == None:
@@ -69,7 +75,13 @@ async def get_player_spiritbomb( ctx ):
     raise lightbulb.CommandErrorEvent
   
   query = ctx.options.player.strip().lower()
-  player = find_player( query )
+  player = find_player( ctx, query )
+
+  # break: player id not found
+  if len( query ) == 0 and player_not_found( player ):
+    embed = error_embed( f"Unable to find your ID" )
+    embed.add_field( "You aren't registered yet...", "Use `/register` to request to have your ID tied to your Scoreboard entry.\nIf you have registered, please wait for Quetz to add you to the database." )
+    return
   
   # break: player not found
   if player_not_found( player ):
@@ -106,7 +118,13 @@ async def get_player_score( ctx ):
     raise lightbulb.CommandErrorEvent
 
   query = ctx.options.player.strip().lower()
-  player = find_player( query )
+  player = find_player( ctx, query )
+  
+  # break: player id not found
+  if len( query ) == 0 and player_not_found( player ):
+    embed = error_embed( f"Unable to find your ID" )
+    embed.add_field( "You aren't registered yet...", "Use `/register` to request to have your ID tied to your Scoreboard entry.\nIf you have registered, please wait for Quetz to add you to the database." )
+    return
   
   # break: player not found
   if player_not_found( player ):
@@ -140,7 +158,13 @@ async def get_player_submissions( ctx ):
     raise lightbulb.CommandErrorEvent
   
   query = ctx.options.player.strip().lower()
-  player = find_player( query )
+  player = find_player( ctx, query )
+
+  # break: player id not found
+  if len( query ) == 0 and player_not_found( player ):
+    embed = error_embed( f"Unable to find your ID" )
+    embed.add_field( "You aren't registered yet...", "Use `/register` to request to have your ID tied to your Scoreboard entry.\nIf you have registered, please wait for Quetz to add you to the database." )
+    return
   
   # break: player not found
   if player_not_found( player ):
@@ -207,7 +231,11 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   if len( filtered_games ) == 1:
     sub = filtered_games[ 0 ]
 
-    embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
+    if sub.type == SubmissionType.LEGACY:
+      embed.add_field( f"{ sub.name }", f"This was a legacy submission" )
+    else:
+      embed.add_field( f"{ sub.name }", f"Submitted by: { sub.submitter }" )
+
     await ctx.respond( embed )
     return
   
@@ -247,7 +275,13 @@ async def register_discord_to_scoreboard( ctx: lightbulb.SlashContext ):
     raise lightbulb.CommandErrorEvent
   
   query          = ctx.options.username.strip().lower()
-  player: Player = find_player( query )
+  player: Player = find_player( ctx, query )
+
+  # break: player id not found
+  if len( query ) == 0 and player_not_found( player ):
+    embed = error_embed( f"Unable to find your ID" )
+    embed.add_field( "You aren't registered yet...", "Use `/register` to request to have your ID tied to your Scoreboard entry.\nIf you have registered, please wait for Quetz to add you to the database." )
+    return
   
   # break: player not found
   if player_not_found( player ):
