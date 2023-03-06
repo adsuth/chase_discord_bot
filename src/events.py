@@ -47,7 +47,7 @@ if ERROR_HANDLING_ENABLED:
     )
 
 # # # # # # # # # # # # # # # # # # # # # # # #
-#     Error Handling 
+#     Registration 
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 @cfg.bot.listen( hikari.events.ReactionEvent )
@@ -61,6 +61,11 @@ async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
     return
   
   original_message = await cfg.bot.rest.fetch_message( event.channel_id, event.message_id )
+
+  # break: bots cannot trigger this event
+  if original_message.author.is_bot:
+    return
+
   value = original_message.embeds[0].fields[0].value
 
   user_data   = parse_request_message( value )

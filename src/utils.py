@@ -349,8 +349,8 @@ def bot_allow_action( ctx: lightbulb.SlashContext ) -> bool:
   if IN_DEBUG_MODE:
     return True
   
-  if ctx.channel_id != CHANNELS[ "bot_channel" ]:
-    return False
+  # if ctx.channel_id != CHANNELS[ "bot_channel" ]:
+  #   return False
 
   if ctx.author.is_bot:
     return False

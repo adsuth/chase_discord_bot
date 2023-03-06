@@ -26,13 +26,13 @@ ADMIN_ROLES = [
 ]
 
 CHANNELS = {
-  "regsiter_channel": 1080278638286622791,  # This is where register requests are sent (should be hidden, accessible only to Quetz)
-  "bot_channel":      1079817162685956176   # This is where commands can be used
+  "register_channel": 1080278638286622791,  # This is where register requests are sent (should be hidden, accessible only to Quetz)
+  "bot_channel":      1079817162685956176,  # This is where commands can be used
 }
 
 DEBUG_LOGGING_INCLUDED    = False
 IN_DEBUG_MODE             = False
-ERROR_HANDLING_ENABLED    = True
+ERROR_HANDLING_ENABLED    = False
 
 PATH_TO_LEGACY_GAME_LIST  = "./src/public/legacy_games.txt"
 
