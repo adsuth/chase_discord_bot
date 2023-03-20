@@ -253,7 +253,7 @@ async def get_who_subbed( ctx: lightbulb.SlashContext ):
   embed.add_field( NON_BREAK_SPACE, "⬇️  Please clarify with the selection below. ⬇️" )
   
   view.add_item( WhoSubbedSelect( options = convert_to_options( filtered_games ) ) )
-  view.add_item( CloseButton() )  
+  # view.add_item( CloseButton() )  
   
   message = await ctx.respond( embed, components = view, flags = hikari.MessageFlag.EPHEMERAL )
   
