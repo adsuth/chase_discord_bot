@@ -1,6 +1,8 @@
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Data Classes
 # # # # # # # # # # # # # # # # # # # # # # # #
+from enum import Enum, auto
+
 class EMBED_COLORS:
   error       = 0xff4063
   failure     = 0xff4063
@@ -11,21 +13,20 @@ class EMBED_COLORS:
   success     = 0x2eff43
   spiritbomb  = 0x62efff
   register    = 0x62efff
-  cyan        = 0x62efff
 
 
 
 # # # # # # # # # # # # # # # # # # # # # # # #
 #     Enums
 # # # # # # # # # # # # # # # # # # # # # # # #
-class SubmissionType:
-  MICRO   = 0
-  REGULAR = 1
-  LEGACY  = 2
+class SubmissionType( Enum ):
+  MICRO   = auto()
+  REGULAR = auto()
+  LEGACY  = auto()
 
-class AliasType:
-  PLAYER = 0
-  CHASER = 1
+class AliasType( Enum ):
+  PLAYER = auto()
+  CHASER = auto()
   
   
   

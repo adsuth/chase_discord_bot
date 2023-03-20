@@ -21,10 +21,12 @@ NO_OF_SCORE_DATA_COLUMNS    = 20
 MAX_NO_OF_SELECT_OPTIONS    = 25
 
 """Can add permissions if needed (eg, if Chasers should be able to refresh data)"""
+# unused
 ADMIN_ROLES = [
   520207923763347471,    # Quizmaster - Quetz
 ]
 
+# unused
 CHANNELS = {
   "register_channel": 1080278638286622791,  # This is where register requests are sent (should be hidden, accessible only to Quetz)
   "bot_channel":      1079817162685956176,  # This is where commands can be used

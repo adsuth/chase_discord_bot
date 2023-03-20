@@ -50,43 +50,43 @@ if ERROR_HANDLING_ENABLED:
 #     Registration 
 # # # # # # # # # # # # # # # # # # # # # # # #
 
-@cfg.bot.listen( hikari.events.ReactionEvent )
-async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
-  """
-  Upon using the /register command, a message is sent to the hidden "register" channel (that only Quetz should have access to) \n
-  """
+# @cfg.bot.listen( hikari.events.ReactionEvent )
+# async def on_reaction( event: hikari.events.ReactionEvent ) -> None:
+#   """
+#   Upon using the /register command, a message is sent to the hidden "register" channel (that only Quetz should have access to) \n
+#   """
 
-  # break: reaction not in the correct channel
-  if event.channel_id != CHANNELS[ "register_channel" ]:
-    return
+#   # break: reaction not in the correct channel
+#   if event.channel_id != CHANNELS[ "register_channel" ]:
+#     return
   
-  original_message = await cfg.bot.rest.fetch_message( event.channel_id, event.message_id )
+#   original_message = await cfg.bot.rest.fetch_message( event.channel_id, event.message_id )
 
-  # break: bots cannot trigger this event
-  if original_message.author.is_bot:
-    return
+#   # break: bots cannot trigger this event
+#   if original_message.author.is_bot:
+#     return
 
-  value = original_message.embeds[0].fields[0].value
+#   value = original_message.embeds[0].fields[0].value
 
-  user_data   = parse_request_message( value )
+#   user_data   = parse_request_message( value )
 
-  # break: if player is in database already
-  if find_player_by_id( user_data[ "id" ] ) != None:
-    dlog( "User with ID %d has already been added to the database" % ( user_data[ "id" ] ) )
-    return
+#   # break: if player is in database already
+#   if find_player_by_id( user_data[ "id" ] ) != None:
+#     dlog( "User with ID %d has already been added to the database" % ( user_data[ "id" ] ) )
+#     return
 
-  # step: add player's id to the database
-  cfg.DATABASE.get( user_data["key"] ).discord_id = user_data[ "id" ]
+#   # step: add player's id to the database
+#   cfg.DATABASE.get( user_data["key"] ).discord_id = user_data[ "id" ]
 
-  # success: DM player to notify them of the request being successful
-  user_snowflake = await cfg.bot.rest.fetch_user( user_data[ "id" ] )
+#   # success: DM player to notify them of the request being successful
+#   user_snowflake = await cfg.bot.rest.fetch_user( user_data[ "id" ] )
 
-  embed = generic_embed( None, "✅  Registration Confirmed!", COLORS.success )
-  embed.add_field( "Your Discord ID has been linked to the Scoreboard", "Now when you enter a command, you won't need to pass your name. Simply leave the option blank and we'll get your data automatically! " )
+#   embed = generic_embed( None, "✅  Registration Confirmed!", COLORS.success )
+#   embed.add_field( "Your Discord ID has been linked to the Scoreboard", "Now when you enter a command, you won't need to pass your name. Simply leave the option blank and we'll get your data automatically! " )
 
-  await user_snowflake.send(
-    embed = embed
-  )
+#   await user_snowflake.send(
+#     embed = embed
+#   )
 
-  await original_message.delete()
+#   await original_message.delete()
 
